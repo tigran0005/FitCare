@@ -3,7 +3,9 @@ package com.example.fitcarehub;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -17,13 +19,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import android.content.SharedPreferences;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText loginEmail, loginPassword;
-    private TextView signupRedirectText, forgotPassword;
     private Button loginButton;
+    private TextView signUpRedirectText, forgotPassword;
     private FirebaseAuth auth;
     private boolean isForgotPasswordClicked = false;
     private int backPressCounter = 0;
@@ -37,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         loginEmail = findViewById(R.id.login_email);
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
-        signupRedirectText = findViewById(R.id.signUpRedirectText);
+        signUpRedirectText = findViewById(R.id.signUpRedirectText);
         forgotPassword = findViewById(R.id.forgot_password);
 
         auth = FirebaseAuth.getInstance();
@@ -54,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        signupRedirectText.setOnClickListener(new View.OnClickListener() {
+        signUpRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
@@ -77,14 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         String email = loginEmail.getText().toString().trim();
         String password = loginPassword.getText().toString().trim();
 
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            loginEmail.setError("Enter a valid email address");
-            loginButton.setEnabled(true);
-            return;
-        }
-
-        if (TextUtils.isEmpty(password)) {
-            loginPassword.setError("Enter your password");
+        if (!validateForm(email, password)) {
             loginButton.setEnabled(true);
             return;
         }
@@ -169,9 +163,9 @@ public class LoginActivity extends AppCompatActivity {
 
         backPressCounter++;
 
-        if (backPressCounter == 2) {
+        if (backPressCounter == 1) {
             Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
-        } else if (backPressCounter >= 3) {
+        } else if (backPressCounter >= 2) {
             finishAffinity();
             return;
         }
@@ -201,5 +195,23 @@ public class LoginActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    private boolean validateForm(String email, String password) {
+        boolean valid = true;
 
+        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            loginEmail.setError("Enter a valid email address");
+            valid = false;
+        } else {
+            loginEmail.setError(null);
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            loginPassword.setError("Enter your password");
+            valid = false;
+        } else {
+            loginPassword.setError(null);
+        }
+
+        return valid;
+    }
 }

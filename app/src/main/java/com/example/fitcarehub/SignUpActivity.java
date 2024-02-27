@@ -1,113 +1,78 @@
 package com.example.fitcarehub;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private EditText editTextEmail;
-    private EditText editTextPassword;
-    private Button buttonSignUp;
-    private TextView loginRedirectText, continueAsGuest;
+    private EditText editTextEmail, editTextPassword;
     private FirebaseAuth mAuth;
-    private int backPressCounter = 0;
-    private long lastBackPressTime = 0;
-
-    @Override
-    public void onBackPressed() {
-        backPressCounter++;
-        if (backPressCounter == 2) {
-            Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
-        }
-        if (backPressCounter == 3) {
-            finishAffinity();
-            return;
-        }
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBackPressTime > 2000) {
-            backPressCounter = 1;
-        }
-        lastBackPressTime = currentTime;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        initUI();
+        setupListeners();
+    }
 
+    private void initUI() {
         editTextEmail = findViewById(R.id.signup_email);
         editTextPassword = findViewById(R.id.signup_password);
-        buttonSignUp = findViewById(R.id.signup_button);
-        loginRedirectText = findViewById(R.id.loginRedirectText);
-        continueAsGuest = findViewById(R.id.continueAsGuest);
+        mAuth = FirebaseAuth.getInstance();
+    }
 
+    private void setupListeners() {
+        findViewById(R.id.signup_button).setOnClickListener(v -> registerUser());
+        findViewById(R.id.loginRedirectText).setOnClickListener(v -> redirectToLogin());
+        findViewById(R.id.continueAsGuest).setOnClickListener(v -> continueAsGuest());
+    }
 
+    private void registerUser() {
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
 
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        if (!isInputValid(email, password)) return;
 
-        if (isLoggedIn) {
-            // User is already logged in, skip to MainActivity
-            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // Make sure this activity is removed from the back stack
-            return; // Prevent further execution of this method
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                saveEmail(email);
+                sendVerificationEmail();
+            } else {
+                Toast.makeText(SignUpActivity.this, "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean isInputValid(String email, String password) {
+        boolean valid = true;
+
+        // Validate email and password. Similar to LoginActivity.
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            editTextEmail.setError("Enter a valid email address");
+            valid = false;
+        } else {
+            editTextEmail.setError(null);
         }
 
-        loginRedirectText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
-        });
+        if (password.isEmpty() || password.length() < 6) {
+            editTextPassword.setError("Password must be at least 6 characters");
+            valid = false;
+        } else {
+            editTextPassword.setError(null);
+        }
 
-        continueAsGuest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        mAuth = FirebaseAuth.getInstance();
-
-        buttonSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = editTextEmail.getText().toString();
-                String password = editTextPassword.getText().toString();
-
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener() {
-                            @Override
-                            public void onComplete(@NonNull Task task) {
-                                if (task.isSuccessful()) {
-                                    // Сохраняем адрес электронной почты
-                                    saveEmail(email);
-                                    sendVerificationEmail();
-                                } else {
-                                    Toast.makeText(SignUpActivity.this, "Sign up failed. Please try again.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }
-        });
+        return valid;
     }
 
     private void sendVerificationEmail() {
@@ -121,9 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Toast.makeText(SignUpActivity.this, "Verification email sent",
                                         Toast.LENGTH_SHORT).show();
-
-                                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                                startActivity(intent);
+                                redirectToLogin();
                             } else {
                                 Toast.makeText(SignUpActivity.this, "Failed to send verification email",
                                         Toast.LENGTH_SHORT).show();
@@ -133,10 +96,28 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+    private void redirectToLogin() {
+        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void continueAsGuest() {
+        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void saveEmail(String email) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email", email);
         editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Handle onBackPressed if required
+        super.onBackPressed();
     }
 }
