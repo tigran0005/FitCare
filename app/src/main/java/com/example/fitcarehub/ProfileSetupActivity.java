@@ -1,7 +1,10 @@
 package com.example.fitcarehub;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
@@ -30,7 +33,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
 
         continueButton.setOnClickListener(view -> {
             // Reset EditText backgrounds to default
-            resetEditTextBackgrounds();
+//            resetEditTextBackgrounds();
 
             // Get the text from the EditText fields
             String name = nameEditText.getText().toString().trim();
@@ -69,6 +72,13 @@ public class ProfileSetupActivity extends AppCompatActivity {
             intent.putExtra("previousActivity", "ProfileSetupActivity");
             intent.putExtra("name", name);
             intent.putExtra("surname", surname);
+            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("name", name);
+            editor.putString("surname", surname);
+            editor.putBoolean("isLoggedIn", true); // Add this line to indicate the user has logged in and setup their profile
+            editor.apply();
+
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
@@ -80,6 +90,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         long currentTime = System.currentTimeMillis();
@@ -99,13 +110,11 @@ public class ProfileSetupActivity extends AppCompatActivity {
         lastBackPressTime = currentTime;
     }
 
-    // Function to reset EditText backgrounds to default
-    private void resetEditTextBackgrounds() {
+    private void resetEditTextBackg5rounds() {
         nameEditText.setBackgroundResource(R.drawable.custom_edittext);
         surnameEditText.setBackgroundResource(R.drawable.custom_edittext);
     }
 
-    // Function to show Toast message
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }

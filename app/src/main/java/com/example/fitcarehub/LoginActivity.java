@@ -200,4 +200,6 @@ public class LoginActivity extends AppCompatActivity {
         editor.putInt(email, loginCount + 1);
         editor.apply();
     }
+
+
 }

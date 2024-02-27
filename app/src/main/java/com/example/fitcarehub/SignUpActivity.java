@@ -54,6 +54,19 @@ public class SignUpActivity extends AppCompatActivity {
         loginRedirectText = findViewById(R.id.loginRedirectText);
         continueAsGuest = findViewById(R.id.continueAsGuest);
 
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        if (isLoggedIn) {
+            // User is already logged in, skip to MainActivity
+            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Make sure this activity is removed from the back stack
+            return; // Prevent further execution of this method
+        }
+
         loginRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

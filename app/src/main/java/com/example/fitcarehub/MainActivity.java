@@ -1,6 +1,8 @@
 package com.example.fitcarehub;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    private boolean isLoginOrSignInActivity = false;
     private int backPressCounter = 0;
     private long lastBackPressTime = 0;
 
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         String surname = getIntent().getStringExtra("surname");
         TextView welcomeTextView = findViewById(R.id.Welcome);
         welcomeTextView.setText("Hi, " + name);
+        isLoginOrSignInActivity = getIntent().getBooleanExtra("isLoginOrSignInActivity", false);
 
         Button buttonHome = findViewById(R.id.button_home);
         Button buttonProfile = findViewById(R.id.button_profile);
@@ -38,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         buttonProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("Profile button clicked");
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                intent.putExtra("isLoginOrSignInActivity", isLoginOrSignInActivity);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
@@ -58,22 +62,30 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBackPressTime > 2000) {
-            backPressCounter = 0;
+        // If the last activity was login or sign-in activity, do nothing on back press
+        if (isLoginOrSignInActivity) {
+            super.onBackPressed();
+        } else {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastBackPressTime > 2000) {
+                backPressCounter = 0;
+            }
+
+            backPressCounter++;
+
+            if (backPressCounter == 2) {
+                Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
+            } else if (backPressCounter >= 3) {
+                finishAffinity();
+                return;
+            }
+
+            lastBackPressTime = currentTime;
         }
-
-        backPressCounter++;
-
-        if (backPressCounter == 2) {
-            Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
-        } else if (backPressCounter >= 3) {
-            finishAffinity();
-            return;
-        }
-
-        lastBackPressTime = currentTime;
     }
+
+
 }
