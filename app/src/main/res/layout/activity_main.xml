@@ -7,123 +7,9 @@
 
     tools:context=".MainActivity">
 
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Welcome"-->
-<!--        android:id="@+id/welcome"-->
-<!--        android:layout_marginTop="250dp"-->
-<!--        android:textColor="@color/purpur"-->
-<!--        android:textSize="26sp"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/userName"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"/>-->
-
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="name"-->
-<!--        android:id="@+id/userName"-->
-<!--        android:textColor="@color/purpur"-->
-<!--        android:textSize="26sp"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/welcome"/>-->
-
-<!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Log Out"-->
-<!--        android:id="@+id/logout"-->
-<!--        android:textSize="20sp"-->
-<!--        android:padding="12dp"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        app:cornerRadius = "15dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/userName"/>-->
 
 
-    <LinearLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        >
 
-        <!-- Left Side -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:orientation="vertical"
-            android:padding="30dp">
-
-            <!-- Left Side Content -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/Welcome"
-                android:text="Hi, Tigran"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Let’s check your activity"
-                android:textSize="20sp"
-                android:layout_marginTop="10dp"
-                />
-
-        </LinearLayout>
-
-        <!-- Right Side -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <!-- Right Side Content -->
-
-<!--            A lot of things to do-->
-            <LinearLayout
-                android:id="@+id/your_view_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rectangle_shape"
-                android:orientation="vertical"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_marginTop="20dp"
-                android:layout_centerInParent="true">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    app:cardCornerRadius="37.5dp"
-                    app:cardBackgroundColor="#CFCCF6"
-                    android:layout_gravity="center">
-
-                    <ImageView
-                        android:id="@+id/image_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/profile_image"
-                        android:scaleType="centerCrop"
-                        android:layout_gravity="center"/>
-
-                </androidx.cardview.widget.CardView>
-
-            </LinearLayout>
-        </LinearLayout>
-
-    </LinearLayout>
     <!-- Footer Section -->
     <LinearLayout
         android:id="@+id/footer"
@@ -180,22 +66,16 @@
 
     </LinearLayout>
 
-    <!-- Content Section -->
-    <RelativeLayout
-        android:id="@+id/content"
+    <fragment
+        android:id="@+id/main_fragment_id"
+        android:name="com.example.fitcarehub.MainFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_above="@id/footer"
-        android:layout_below="@id/header">
+        android:layout_below="@id/header"
+        android:layout_alignParentTop="true"
+        tools:ignore="NotSibling" />
 
-        <!-- Content Content -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Content"
-            android:padding="16dp"
-            android:textSize="20sp"/>
 
-    </RelativeLayout>
 
 </RelativeLayout>

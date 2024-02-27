@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainFragment">
+
+    <!-- Header Section -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FBFBFF"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="16dp"> <!-- Added paddingBottom to ensure shadows have space -->
+
+        <!-- Left Side -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="vertical"
+            android:padding="30dp">
+
+            <!-- Left Side Content -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Welcome"
+                android:text="Hi, Guest"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Let’s check your activity"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp" />
+
+        </LinearLayout>
+
+        <!-- Right Side -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"> <!-- Adjusted for shadow -->
+
+            <!-- Right Side Content -->
+
+            <!-- A lot of things to do -->
+            <LinearLayout
+                android:id="@+id/your_view_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rectangle_shape"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_centerInParent="true">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    app:cardCornerRadius="37.5dp"
+                    app:cardBackgroundColor="#CFCCF6"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:id="@+id/image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/profile_image"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="center" />
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+    <!-- Content Section -->
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#FBFBFF"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        android:paddingBottom="16dp"> <!-- Padding for shadow -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"> <!-- Additional space for shadows -->
+
+            <!-- Left side -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp"> <!-- Margin for shadow -->
+
+                <LinearLayout
+                    android:layout_width="175dp"
+                    android:layout_height="210dp"
+                    android:elevation="4dp"
+                    android:background="@drawable/shape"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp"/> <!-- Ensure shadow space -->
+
+            </LinearLayout>
+
+            <!-- Right side -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp"> <!-- Margin for shadow -->
+
+                <LinearLayout
+                    android:layout_width="175dp"
+                    android:layout_height="100dp"
+                    android:elevation="4dp"
+                    android:background="@drawable/shape"
+                    android:layout_marginBottom="10dp" /> <!-- Space between elements for shadow -->
+
+                <LinearLayout
+                    android:layout_width="175dp"
+                    android:layout_height="100dp"
+                    android:elevation="4dp"
+                    android:background="@drawable/shape" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
