@@ -4,78 +4,96 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context=".MainActivity">
 
-
-
-
-    <!-- Footer Section -->
     <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ccc000"
+        android:layout_height="55dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true">
 
-        <!-- Home Button with Icon -->
         <Button
             android:id="@+id/button_home"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Home"
+            android:drawableTop="@drawable/__icon__home_purpur"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:gravity="center"
-            android:drawableTop="@drawable/__icon__home_"
-            android:drawablePadding="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"/>
 
-        <!-- Profile Button with Icon -->
+            />
         <Button
             android:id="@+id/button_profile"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Profile"
+            android:drawableTop="@drawable/__icon__local_fire_department_purpur"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:gravity="center"
-            android:drawableTop="@drawable/__icon__local_fire_department_"
-            android:drawablePadding="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"/>
 
-        <!-- Settings Button with Icon -->
+            />
         <Button
             android:id="@+id/button_settings"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Settings"
+            android:drawableTop="@drawable/__icon__person_purpur"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:gravity="center"
-            android:drawableTop="@drawable/__icon__person_"
-            android:drawablePadding="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"/>
+            />
+
+
+<!--        <Button-->
+<!--            android:id="@+id/button_home"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Главная"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:gravity="center"-->
+<!--            android:drawableTop="@drawable/__icon__home_purpur"-->
+<!--            />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/button_profile"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Профиль"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:gravity="center"-->
+<!--            android:drawableTop="@drawable/__icon__local_fire_department_"-->
+<!--            android:drawablePadding="8dp"-->
+<!--            android:paddingTop="8dp"-->
+<!--            android:paddingBottom="8dp"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/button_settings"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Настройки"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:gravity="center"-->
+<!--            android:drawableTop="@drawable/__icon__person_"-->
+<!--            android:drawablePadding="8dp"-->
+<!--            android:paddingTop="8dp"-->
+<!--            android:paddingBottom="8dp"/>-->
 
     </LinearLayout>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_fragment_id"
-        android:name="com.example.fitcarehub.MainFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@id/footer"
-        android:layout_below="@id/header"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="-3dp"
+        android:layout_marginBottom="3dp"
         tools:ignore="NotSibling" />
-
-
 
 </RelativeLayout>

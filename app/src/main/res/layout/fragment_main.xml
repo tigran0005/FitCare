@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainFragment">
 
-    <!-- Header Section -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#FBFBFF"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:paddingBottom="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:paddingBottom="16dp"> <!-- Added paddingBottom to ensure shadows have space -->
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Left Side -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -26,59 +24,55 @@
             android:orientation="vertical"
             android:padding="30dp">
 
-            <!-- Left Side Content -->
             <TextView
+                android:id="@+id/Welcome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/Welcome"
-                android:text="Hi, Guest"
+                android:text="Привет, Гость"
                 android:textSize="30sp"
                 android:textStyle="bold" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Let’s check your activity"
-                android:textSize="20sp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:text="Давайте проверим вашу активность"
+                android:textSize="20sp" />
 
         </LinearLayout>
 
-        <!-- Right Side -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp"> <!-- Adjusted for shadow -->
+            android:orientation="vertical">
 
-            <!-- Right Side Content -->
-
-            <!-- A lot of things to do -->
             <LinearLayout
                 android:id="@+id/your_view_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rectangle_shape"
-                android:orientation="vertical"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:gravity="center"
                 android:layout_marginTop="20dp"
-                android:layout_centerInParent="true">
+                android:background="@drawable/rectangle_shape"
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="75dp"
                     android:layout_height="75dp"
-                    app:cardCornerRadius="37.5dp"
+                    android:layout_gravity="center"
                     app:cardBackgroundColor="#CFCCF6"
-                    android:layout_gravity="center">
+                    app:cardCornerRadius="37.5dp">
 
                     <ImageView
-                        android:id="@+id/image_view"
+                        android:id="@+id/profileImageMainFragment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/profile_image"
+                        android:layout_gravity="center"
                         android:scaleType="centerCrop"
-                        android:layout_gravity="center" />
+                        android:src="@drawable/defaultprofilepicture" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -86,70 +80,364 @@
         </LinearLayout>
 
     </LinearLayout>
-    <!-- Content Section -->
+
     <LinearLayout
         android:id="@+id/content"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#FBFBFF"
         android:orientation="vertical"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        android:paddingBottom="16dp"> <!-- Padding for shadow -->
+        app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"> <!-- Additional space for shadows -->
+            android:paddingBottom="16dp">
 
-            <!-- Left side -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:layout_marginBottom="16dp"> <!-- Margin for shadow -->
+                android:orientation="vertical">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="175dp"
-                    android:layout_height="210dp"
-                    android:elevation="4dp"
-                    android:background="@drawable/shape"
+                    android:layout_height="233dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:layout_marginTop="16dp"/> <!-- Ensure shadow space -->
+                    android:background="@drawable/shape"
+                    android:elevation="4dp">
+
+                    <LinearLayout
+                        android:id="@+id/centeredLinearLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintVertical_bias="0.5">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="🔥 Finished"
+                            android:textAlignment="center"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:textSize="85sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Completed
+                            Workouts"
+                            android:textAlignment="center"
+                            android:textColor="#C0C0C0"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             </LinearLayout>
 
-            <!-- Right side -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:layout_marginBottom="16dp"> <!-- Margin for shadow -->
+                android:orientation="vertical">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="175dp"
                     android:layout_height="100dp"
-                    android:elevation="4dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     android:background="@drawable/shape"
-                    android:layout_marginBottom="10dp" /> <!-- Space between elements for shadow -->
+                    android:elevation="4dp">
 
-                <LinearLayout
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintVertical_bias="0.5">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="⌛ In progress"
+                                android:textSize="20sp"
+                                android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="#000"
+                                android:textSize="25sp"
+                                android:textStyle="bold"
+                                android:layout_marginStart="15dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Workouts"
+                                android:textAlignment="center"
+                                android:textColor="#C0C0C0"
+                                android:textSize="15sp"
+                                android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="175dp"
                     android:layout_height="100dp"
-                    android:elevation="4dp"
-                    android:background="@drawable/shape" />
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/shape"
+                    android:elevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintVertical_bias="0.5">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="⏱ Time spent"
+                                android:textSize="20sp"
+                                android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="#000"
+                                android:textSize="25sp"
+                                android:textStyle="bold"
+                                android:layout_marginStart="15dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Minutes"
+                                android:textAlignment="center"
+                                android:textColor="#C0C0C0"
+                                android:textSize="15sp"
+                                android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             </LinearLayout>
+
 
         </LinearLayout>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            >
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Discover new workouts"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="225dp"
+                        android:layout_height="150dp"
+                        android:background="@drawable/shape2"
+                        android:elevation="4dp"
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.5"/>
+
+                        <LinearLayout
+                            android:id="@+id/fitnessFirstLinearLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:orientation="vertical"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/guideline">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Cardio"
+                                android:textColor="@color/white"
+                                android:textAlignment="center"
+                                android:textSize="30dp"
+                                android:layout_marginTop="20dp" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="15dp"
+                                android:text="10 Exercises"
+                                android:textColor="@color/white"
+                                android:layout_marginTop="10dp"
+                                android:textAlignment="center"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="15dp"
+                                android:text="50 Minutes"
+                                android:textColor="@color/white"
+                                android:textAlignment="center"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/fitnessSecondLinearLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:orientation="vertical"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/guideline"
+                            app:layout_constraintEnd_toEndOf="parent">
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/girlrunningwithweights"/>
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="225dp"
+                        android:layout_height="150dp"
+                        android:background="@drawable/shape3"
+                        android:elevation="4dp"
+                        android:layout_marginStart="20dp"
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideline1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.5"/>
+
+                        <LinearLayout
+                            android:id="@+id/armsFitnessFirstLinearLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:orientation="vertical"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/guideline1">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Arms"
+                                android:textColor="@color/white"
+                                android:textAlignment="center"
+                                android:textSize="30dp"
+                                android:layout_marginTop="20dp" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="15dp"
+                                android:text="5 Exercises"
+                                android:textColor="@color/white"
+                                android:layout_marginTop="10dp"
+                                android:textAlignment="center"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="15dp"
+                                android:text="30 Minutes"
+                                android:textColor="@color/white"
+                                android:textAlignment="center"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/armsFitnessSecondLinearLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:orientation="vertical"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/guideline1"
+                            app:layout_constraintEnd_toEndOf="parent">
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/mandoingarmswithweights"/>
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

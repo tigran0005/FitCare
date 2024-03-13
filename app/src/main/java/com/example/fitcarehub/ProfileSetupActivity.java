@@ -1,72 +1,86 @@
 package com.example.fitcarehub;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.annotation.SuppressLint;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.example.fitcarehub.databinding.ActivityProfileSetupBinding; // Make sure this import matches your layout file name
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.fitcarehub.databinding.ActivityProfileSetupBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProfileSetupActivity extends AppCompatActivity {
     private int backPressCounter = 0;
     private long lastBackPressTime = 0;
-    private ActivityProfileSetupBinding binding; // Update for view binding
-    FirebaseDatabase db;
-    DatabaseReference reference;
+    private ActivityProfileSetupBinding binding;
+    FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityProfileSetupBinding.inflate(getLayoutInflater()); // Initialize binding
+        binding = ActivityProfileSetupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        db = FirebaseDatabase.getInstance();
-        reference = db.getReference("Users");
+        firestore = FirebaseFirestore.getInstance();
 
         binding.continueBtn.setOnClickListener(view -> {
             String name = binding.name.getText().toString().trim();
             String surname = binding.surname.getText().toString().trim();
 
             if (validateInputs(name, surname)) {
-                saveUserToFirebase(name, surname); // Save to Firebase and navigate
+                saveUserToFirestore(name, surname);
             }
         });
 
         binding.goToLogin.setOnClickListener(view -> navigateToLogin());
     }
 
-    private void saveUserToFirebase(String name, String surname) {
-        String userId = reference.push().getKey();
-        if (userId == null) return;
-        User user = new User(name, surname);
-        reference.child(userId).setValue(user)
-                .addOnSuccessListener(aVoid -> {
-                    showToast("Profile saved successfully");
-                    navigateToMainActivity(); // Navigate to MainActivity after saving
-                })
-                .addOnFailureListener(e -> showToast("Failed to save profile"));
+    private void saveUserToFirestore(String name, String surname) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+            String capitalizedFirstName = name.substring(0, 1).toUpperCase() + name.substring(1);
+            String capitalizedLastName = surname.substring(0, 1).toUpperCase() + surname.substring(1);
+
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("name", capitalizedFirstName);
+            userData.put("surname", capitalizedLastName);
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("Users").document(userId).set(userData)
+                    .addOnSuccessListener(aVoid -> {
+                        showToast("Профиль успешно сохранен");
+                        navigateToMainActivity(capitalizedFirstName, capitalizedLastName);
+                    })
+                    .addOnFailureListener(e -> showToast("Не удалось сохранить профиль"));
+        } else {
+            showToast("Пользователь не вошел в систему");
+        }
     }
 
-    private void navigateToMainActivity() {
+    private void navigateToMainActivity(String name, String surname) {
         Intent intent = new Intent(ProfileSetupActivity.this, MainActivity.class);
+        intent.putExtra("name", name);
+        intent.putExtra("surname", surname);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private boolean validateInputs(String name, String surname) {
         boolean isValid = true;
         if (TextUtils.isEmpty(name)) {
             binding.name.setBackgroundResource(R.drawable.edittext_error);
-            showToast("Please enter your name");
+            showToast("Введите свое имя");
             isValid = false;
         }
         if (TextUtils.isEmpty(surname)) {
             binding.surname.setBackgroundResource(R.drawable.edittext_error);
-            showToast("Please enter your surname");
+            showToast("Введите свою фамилию");
             isValid = false;
         }
         return isValid;
@@ -75,38 +89,28 @@ public class ProfileSetupActivity extends AppCompatActivity {
     private void navigateToLogin() {
         Intent intent = new Intent(ProfileSetupActivity.this, LoginActivity.class);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     @Override
     public void onBackPressed() {
-        if (System.currentTimeMillis() - lastBackPressTime < 2000) {
-            if (++backPressCounter >= 2) {
-                finishAffinity();
-                return;
-            }
-        } else {
-            backPressCounter = 1;
-            Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBackPressTime > 2000) {
+            backPressCounter = 0;
         }
-        lastBackPressTime = System.currentTimeMillis();
+
+        backPressCounter++;
+
+        if (backPressCounter == 1) {
+            Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
+        } else if (backPressCounter >= 2) {
+            finishAffinity();
+            return;
+        }
+
+        lastBackPressTime = currentTime;
     }
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public static class User {
-        public String name;
-        public String surname;
-
-        public User() {
-            // Default constructor required for Firebase
-        }
-
-        public User(String name, String surname) {
-            this.name = name;
-            this.surname = surname;
-        }
     }
 }

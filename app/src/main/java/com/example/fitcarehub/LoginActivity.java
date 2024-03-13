@@ -15,10 +15,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -43,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        // Retrieve email from SharedPreferences
         String savedEmail = getEmailFromSharedPreferences();
         loginEmail.setText(savedEmail);
 
@@ -59,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
@@ -83,30 +86,17 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Check if email has been logged in more than once
-        if (checkMultipleLogin(email) >= 50) {
-            // Redirect to another activity if logged in more than once
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-            return;
-        }
-
         auth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        // Save login attempt to SharedPreferences
-                        saveLoginAttempt(email);
-                        Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, ProfileSetupActivity.class));
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        finish();
+                        isEmailVerified();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivity.this, "Login Failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Вход не выполнен. Проверьте ваши учетные данные.", Toast.LENGTH_SHORT).show();
                         loginButton.setEnabled(true);
                     }
                 });
@@ -126,16 +116,16 @@ public class LoginActivity extends AppCompatActivity {
                 String userEmail = emailBox.getText().toString().trim();
 
                 if (TextUtils.isEmpty(userEmail) || !Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
-                    Toast.makeText(LoginActivity.this, "Enter a valid email address", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Введите действительный адрес электронной почты", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 auth.sendPasswordResetEmail(userEmail)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "Check your email for password reset instructions", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Проверьте свою электронную почту для получения инструкций по сбросу пароля", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(LoginActivity.this, "Failed to send password reset email", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Не удалось отправить письмо для сброса пароля", Toast.LENGTH_SHORT).show();
                             }
                             dialog.dismiss();
                             isForgotPasswordClicked = false;
@@ -173,40 +163,27 @@ public class LoginActivity extends AppCompatActivity {
         lastBackPressTime = currentTime;
     }
 
-    // Method to retrieve email from SharedPreferences
     private String getEmailFromSharedPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         return sharedPreferences.getString("email", "");
     }
 
-    // Method to check if email has been logged in more than once
-    private int checkMultipleLogin(String email) {
-        SharedPreferences sharedPreferences = getSharedPreferences("LoginAttempts", MODE_PRIVATE);
-        int loginCount = sharedPreferences.getInt(email, 0);
-        return loginCount;
-    }
 
-    // Method to save login attempt to SharedPreferences
-    private void saveLoginAttempt(String email) {
-        SharedPreferences sharedPreferences = getSharedPreferences("LoginAttempts", MODE_PRIVATE);
-        int loginCount = sharedPreferences.getInt(email, 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(email, loginCount + 1);
-        editor.apply();
-    }
+
+
 
     private boolean validateForm(String email, String password) {
         boolean valid = true;
 
         if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            loginEmail.setError("Enter a valid email address");
+            loginEmail.setError("Введите действительный адрес электронной почты");
             valid = false;
         } else {
             loginEmail.setError(null);
         }
 
         if (TextUtils.isEmpty(password)) {
-            loginPassword.setError("Enter your password");
+            loginPassword.setError("Введите ваш пароль");
             valid = false;
         } else {
             loginPassword.setError(null);
@@ -214,4 +191,66 @@ public class LoginActivity extends AppCompatActivity {
 
         return valid;
     }
+
+    private void sendVerificationEmail() {
+        if (auth.getCurrentUser() != null) {
+            auth.getCurrentUser().sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "Письмо с подтверждением отправлено на " + auth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Не удалось отправить письмо с подтверждением.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void checkUserNameAndSurname() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("Users").document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null) {
+                            String name = document.getString("name");
+                            String surname = document.getString("surname");
+
+                            if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(surname)) {
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(LoginActivity.this, ProfileSetupActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Что то пошло не так.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(LoginActivity.this, "Что то пошло не так.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void isEmailVerified() {
+        FirebaseUser user = auth.getCurrentUser();
+
+        if (user != null && user.isEmailVerified()) {
+            checkUserNameAndSurname();
+        } else {
+            Toast.makeText(LoginActivity.this, "Пожалуйста, подтвердите вашу электронную почту.", Toast.LENGTH_SHORT).show();
+            loginButton.setEnabled(true);
+        }
+    }
+
 }
