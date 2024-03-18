@@ -56,7 +56,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
             db.collection("Users").document(userId).set(userData)
                     .addOnSuccessListener(aVoid -> {
                         showToast("Профиль успешно сохранен");
-                        navigateToMainActivity(capitalizedFirstName, capitalizedLastName);
+                        navigateToChoosePlaceActivity(capitalizedFirstName, capitalizedLastName);
                     })
                     .addOnFailureListener(e -> showToast("Не удалось сохранить профиль"));
         } else {
@@ -64,8 +64,8 @@ public class ProfileSetupActivity extends AppCompatActivity {
         }
     }
 
-    private void navigateToMainActivity(String name, String surname) {
-        Intent intent = new Intent(ProfileSetupActivity.this, MainActivity.class);
+    private void navigateToChoosePlaceActivity(String name, String surname) {
+        Intent intent = new Intent(ProfileSetupActivity.this, ChoosePlaceActivity.class);
         intent.putExtra("name", name);
         intent.putExtra("surname", surname);
         startActivity(intent);

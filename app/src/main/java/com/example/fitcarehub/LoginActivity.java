@@ -48,6 +48,9 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
+
+        String place = getIntent().getStringExtra("place");
+        String plan = getIntent().getStringExtra("plan");
         String savedEmail = getEmailFromSharedPreferences();
         loginEmail.setText(savedEmail);
 
@@ -65,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
             }
         });
+
 
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,19 +91,25 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         auth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        isEmailVerified();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivity.this, "Вход не выполнен. Проверьте ваши учетные данные.", Toast.LENGTH_SHORT).show();
+                .addOnSuccessListener(authResult -> {
+                    FirebaseUser user = auth.getCurrentUser();
+                    if (user != null && user.isEmailVerified()) {
+                        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("isLoggedIn", true);
+                        editor.apply();
+
+                        navigateToMainActivity();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Please verify your email.", Toast.LENGTH_SHORT).show();
                         loginButton.setEnabled(true);
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(LoginActivity.this, "Login failed. Please check your credentials.", Toast.LENGTH_SHORT).show();
+                    loginButton.setEnabled(true);
                 });
+
     }
 
     private void showForgotPasswordDialog() {
@@ -169,9 +179,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
-
-
     private boolean validateForm(String email, String password) {
         boolean valid = true;
 
@@ -223,21 +230,25 @@ public class LoginActivity extends AppCompatActivity {
                             String name = document.getString("name");
                             String surname = document.getString("surname");
 
+                            Intent intent;
                             if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(surname)) {
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
+                                intent = new Intent(LoginActivity.this, MainActivity.class);
                             } else {
-                                Intent intent = new Intent(LoginActivity.this, ProfileSetupActivity.class);
-                                startActivity(intent);
+                                intent = new Intent(LoginActivity.this, ProfileSetupActivity.class);
                             }
+                            intent.putExtra("isLoggedIn", true);
+                            startActivity(intent);
+                            finish();
                         }
                     } else {
                         Toast.makeText(LoginActivity.this, "Что то пошло не так.", Toast.LENGTH_SHORT).show();
+                        loginButton.setEnabled(true);
                     }
                 }
             });
         } else {
             Toast.makeText(LoginActivity.this, "Что то пошло не так.", Toast.LENGTH_SHORT).show();
+            loginButton.setEnabled(true);
         }
     }
 
@@ -251,6 +262,13 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(LoginActivity.this, "Пожалуйста, подтвердите вашу электронную почту.", Toast.LENGTH_SHORT).show();
             loginButton.setEnabled(true);
         }
+    }
+
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
 }

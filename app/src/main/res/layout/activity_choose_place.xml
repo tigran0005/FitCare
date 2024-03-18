@@ -27,10 +27,9 @@
                 android:id="@+id/Welcome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="План Тренеровок"
+                android:text="Место Тренеровок"
                 android:textSize="30sp"
                 android:textStyle="bold" />
-
 
         </LinearLayout>
     </LinearLayout>
@@ -105,12 +104,11 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="15dp"
-                                    android:text="Похудение"
+                                    android:text="Дома"
                                     android:textAlignment="center"
                                     android:textColor="@color/black"
                                     android:textSize="24sp"
-                                    android:textStyle="bold"
-                                    />
+                                    android:textStyle="bold" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -118,15 +116,15 @@
                                 android:layout_height="0dp"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:orientation="horizontal"> <!-- Ensure the orientation is explicitly set to horizontal -->
+                                android:orientation="horizontal">
 
                                 <View
                                     android:layout_width="0dp"
                                     android:layout_height="0dp"
-                                    android:layout_weight="0.1" /> <!-- Spacer view to take up space -->
+                                    android:layout_weight="0.1" />
 
                                 <Button
-                                    android:id="@+id/loseFatButtonChoosePlanActivity"
+                                    android:id="@+id/atHomeButtonChoosePlaceActivity"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="0.5"
@@ -135,7 +133,7 @@
                                 <View
                                     android:layout_width="0dp"
                                     android:layout_height="0dp"
-                                    android:layout_weight="0.1" /> <!-- Spacer view to take up space -->
+                                    android:layout_weight="0.1" />
                             </LinearLayout>
                         </LinearLayout>
 
@@ -148,7 +146,6 @@
                                 android:layout_height="10dp"
                                 android:text="Start" />
                         </LinearLayout>
-
 
                     </LinearLayout>
 
@@ -173,7 +170,6 @@
                     </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="325dp"
@@ -214,9 +210,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="15dp"
-
+                                    android:text="В Спортзале"
                                     android:textAlignment="center"
-                                    android:text="Мышечный рост"
                                     android:textColor="@color/black"
                                     android:textSize="24sp"
                                     android:textStyle="bold" />
@@ -235,7 +230,7 @@
                                     android:layout_weight="0.1" />
 
                                 <Button
-                                    android:id="@+id/musculeGainButtonChoosePlanActivity"
+                                    android:id="@+id/atGymButtonChoosePlaceActivity"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="0.5"
@@ -257,7 +252,6 @@
                                 android:layout_height="10dp"
                                 android:text="Start" />
                         </LinearLayout>
-
 
                     </LinearLayout>
 
@@ -283,9 +277,11 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
             </LinearLayout>
 
         </LinearLayout>
+
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

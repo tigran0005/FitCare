@@ -1,13 +1,12 @@
 package com.example.fitcarehub;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -16,7 +15,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private int backPressCounter = 0;
     private long lastBackPressTime = 0;
     private Button activeButton = null;
@@ -63,14 +62,19 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("Users").document(userId).get().addOnCompleteListener(task -> {
+            firestore.collection("Users").document(userId).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
                     DocumentSnapshot document = task.getResult();
                     String name = document.getString("name");
                     String surname = document.getString("surname");
                     String email = document.getString("email");
-                    setupUIBasedOnUserProfile(name, surname);
+
+                    if(email == null || email.isEmpty()){
+                        Toast.makeText(MainActivity.this, "Email not found in Firestore", Toast.LENGTH_SHORT).show();
+                        email = user.getEmail();
+                    }
+
+                    setupUIBasedOnUserProfile(name, surname, email);
                 } else {
                     navigateToProfileSetupActivity();
                 }
@@ -80,12 +84,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupUIBasedOnUserProfile(String name, String surname) {
+
+    private void setupUIBasedOnUserProfile(String name, String surname, String email) {
         boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
         Bundle bundle = new Bundle();
-        if (!isGuest && name != null && surname != null) {
+        if (!isGuest && name != null && surname != null && email != null) {
             bundle.putString("name", name);
             bundle.putString("surname", surname);
+            bundle.putString("email", email);
+
         } else {
             bundle.putBoolean("isGuest", true);
         }
@@ -161,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBackPressTime > 2000) { // 2 seconds
+        if (currentTime - lastBackPressTime > 2000) {
             backPressCounter = 0;
         }
 
@@ -175,4 +182,38 @@ public class MainActivity extends AppCompatActivity {
         }
         lastBackPressTime = currentTime;
     }
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        // Check if user is signed in (non-null) and email is verified
+//        if (user == null || !user.isEmailVerified()) {
+//            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//            startActivity(intent);
+//            finish(); // Prevents user from returning to MainActivity without authentication
+//        } else {
+//            // User is signed in and email is verified, load main content
+//            loadMainContent();
+//            // Assuming this method sets up your MainActivity content
+//        }
+//    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null && user.isEmailVerified()) {
+            return;
+        } else {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+
 }
+
+

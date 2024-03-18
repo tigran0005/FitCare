@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,7 +33,7 @@ public class EditAccountActivity extends AppCompatActivity {
 
     TextView changePasswordText, editPhotoText;
     ImageView imageView, changePasswordArrow, backToProfileArrow;
-    EditText nameField, surnameField;
+    EditText nameField, surnameField, confrimAccountField;
     Button saveBtn;
     private static final int PICK_IMAGE = 1;
     Uri selectedImageUri;
@@ -48,6 +50,7 @@ public class EditAccountActivity extends AppCompatActivity {
         imageView = findViewById(R.id.profileImageEditAccountActivity);
         nameField = findViewById(R.id.editAccountName);
         surnameField = findViewById(R.id.editAccountSurname);
+        confrimAccountField = findViewById(R.id.editAccountConfromPassword);
         changePasswordText = findViewById(R.id.changePasswordTextEditProfile);
         changePasswordArrow = findViewById(R.id.changePasswordArrowEditProfile);
         backToProfileArrow = findViewById(R.id.backToProfileArrow);
@@ -77,28 +80,53 @@ public class EditAccountActivity extends AppCompatActivity {
         });
 
         saveBtn.setOnClickListener(v -> {
-            Map<String, Object> updatedUserData = new HashMap<>();
+            String password = confrimAccountField.getText().toString().trim();
 
-            String updatedName = nameField.getText().toString().trim();
-            if (!updatedName.isEmpty()) {
-                updatedUserData.put("name", updatedName);
+            if (password.isEmpty()) {
+                showToast("Please enter your password.");
+                return;
             }
 
-            String updatedSurname = surnameField.getText().toString().trim();
-            if (!updatedSurname.isEmpty()) {
-                updatedUserData.put("surname", updatedSurname);
-            }
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String email = user.getEmail();
 
-            if (selectedImageUri != null) {
-                uploadImageAndSaveUserData(updatedUserData);
+            if (user != null && email != null) {
+                AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+
+                user.reauthenticate(credential)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Map<String, Object> updatedUserData = new HashMap<>();
+                                String updatedName = nameField.getText().toString().trim();
+                                if (!updatedName.isEmpty()) {
+                                    updatedName = updatedName.substring(0, 1).toUpperCase() + updatedName.substring(1).toLowerCase();
+                                    updatedUserData.put("name", updatedName);
+                                }
+
+                                String updatedSurname = surnameField.getText().toString().trim();
+                                if (!updatedSurname.isEmpty()) {
+                                    updatedSurname = updatedSurname.substring(0, 1).toUpperCase() + updatedSurname.substring(1).toLowerCase();
+                                    updatedUserData.put("surname", updatedSurname);
+                                }
+
+                                if (selectedImageUri != null) {
+                                    uploadImageAndSaveUserData(updatedUserData);
+                                } else {
+                                    saveUserToFirestoreWithMap(updatedUserData);
+                                }
+
+                                Intent intent = new Intent(EditAccountActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                showToast("Password is incorrect. Please try again.");
+                            }
+                        });
             } else {
-                saveUserToFirestoreWithMap(updatedUserData);
+                showToast("An error occurred. Please try again.");
             }
-
-            Intent intent = new Intent(EditAccountActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
         });
+
     }
 
     private void uploadImageAndSaveUserData(Map<String, Object> userData) {
