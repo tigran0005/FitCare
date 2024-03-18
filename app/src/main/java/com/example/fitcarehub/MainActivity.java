@@ -1,170 +1,70 @@
 package com.example.fitcarehub;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
+public class MainActivity extends AppCompatActivity {
 
-public class MainActivity extends BaseActivity {
     private int backPressCounter = 0;
     private long lastBackPressTime = 0;
-    private Button activeButton = null;
-    private Button[] buttons = new Button[3];
-    private int[] buttonNormalIcons = new int[]{
-            R.drawable.__icon__home_,
-            R.drawable.__icon__local_fire_department_,
-            R.drawable.__icon__person_
-    };
-    private int[] buttonActiveIcons = new int[]{
-            R.drawable.__icon__home_purpur,
-            R.drawable.__icon__local_fire_department_purpur,
-            R.drawable.__icon__person_purpur
-    };
-    private int[] buttonColors = new int[]{R.color.normal_text_color, R.color.purpur};
-
-    FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        firestore = FirebaseFirestore.getInstance();
+<<<<<<<<< Temporary merge branch 1
+        String name = getIntent().getStringExtra("name");
+        String surname = getIntent().getStringExtra("surname");
+        TextView welcomeTextView = findViewById(R.id.Welcome);
+        welcomeTextView.setText("Hi, " + name);
 
-        buttons[0] = findViewById(R.id.button_home);
-        buttons[1] = findViewById(R.id.button_profile);
-        buttons[2] = findViewById(R.id.button_settings);
+=========
+        // Initialize your buttons
+>>>>>>>>> Temporary merge branch 2
+        Button buttonHome = findViewById(R.id.button_home);
+        Button buttonProfile = findViewById(R.id.button_profile);
+        Button buttonSettings = findViewById(R.id.button_settings);
 
-        initButtons();
-
-        loadUserProfile();
-    }
-
-    private void initButtons() {
-        setLargerIconAndTextColor(buttons[0], buttonActiveIcons[0], buttonColors[1]);
-        activeButton = buttons[0];
-        for (int i = 1; i < buttons.length; i++) {
-            setLargerIconAndTextColor(buttons[i], buttonNormalIcons[i], buttonColors[0]);
-        }
-    }
-
-    private void loadUserProfile() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String userId = user.getUid();
-            firestore.collection("Users").document(userId).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful() && task.getResult() != null) {
-                    DocumentSnapshot document = task.getResult();
-                    String name = document.getString("name");
-                    String surname = document.getString("surname");
-                    String email = document.getString("email");
-
-                    if(email == null || email.isEmpty()){
-                        Toast.makeText(MainActivity.this, "Email not found in Firestore", Toast.LENGTH_SHORT).show();
-                        email = user.getEmail();
-                    }
-
-                    setupUIBasedOnUserProfile(name, surname, email);
-                } else {
-                    navigateToProfileSetupActivity();
-                }
-            });
-        } else {
-            navigateToLoginActivity();
-        }
-    }
-
-
-    private void setupUIBasedOnUserProfile(String name, String surname, String email) {
-        boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
-        Bundle bundle = new Bundle();
-        if (!isGuest && name != null && surname != null && email != null) {
-            bundle.putString("name", name);
-            bundle.putString("surname", surname);
-            bundle.putString("email", email);
-
-        } else {
-            bundle.putBoolean("isGuest", true);
-        }
-
-        MainFragment mainFragment = new MainFragment();
-        mainFragment.setArguments(bundle);
-        switchFragment(mainFragment);
-
-        setupButtonListeners(bundle);
-    }
-
-    private void setupButtonListeners(Bundle userBundle) {
-        buttons[0].setOnClickListener(v -> {
-            MainFragment mainFragment = new MainFragment();
-            mainFragment.setArguments(userBundle);
-            switchFragment(mainFragment);
-            setActiveButton(0);
+        // Set up button listeners
+        buttonHome.setOnClickListener(v -> {
+            // Replace the fragment with HomeFragment (or MainFragment)
+            setFragment(new MainFragment());
         });
 
-        buttons[1].setOnClickListener(v -> {
-            WorkoutsFragment workoutsFragment = new WorkoutsFragment();
-            switchFragment(workoutsFragment);
-            setActiveButton(1);
-        });
-
-        buttons[2].setOnClickListener(v -> {
-            ProfileFragment profileFragment = new ProfileFragment();
-            profileFragment.setArguments(userBundle);
-            switchFragment(profileFragment);
-            setActiveButton(2);
-        });
-    }
-
-    private void setLargerIconAndTextColor(Button button, int drawableId, int textColorId) {
-        Drawable drawable = ContextCompat.getDrawable(this, drawableId);
-        button.setTextColor(ContextCompat.getColor(this, textColorId));
-        if (drawable != null) {
-            drawable.setBounds(0, 0, 100, 100);
-            button.setCompoundDrawables(null, drawable, null, null);
-        }
-    }
-
-    private void setActiveButton(int activeIndex) {
-        for (int i = 0; i < buttons.length; i++) {
-            if (i == activeIndex) {
-                setLargerIconAndTextColor(buttons[i], buttonActiveIcons[i], buttonColors[1]);
-                activeButton = buttons[i];
-            } else {
-                setLargerIconAndTextColor(buttons[i], buttonNormalIcons[i], buttonColors[0]);
+<<<<<<<<< Temporary merge branch 1
+        buttonProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
-        }
+=========
+        buttonProfile.setOnClickListener(v -> {
+            // Replace the fragment with ProfileFragment
+            setFragment(new ProfileFragment());
+>>>>>>>>> Temporary merge branch 2
+        });
+
+        buttonSettings.setOnClickListener(v -> {
+            showToast("Settings button clicked");
+        });
     }
 
-    private void switchFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_id, fragment)
-                .setReorderingAllowed(true)
-                .commit();
+    // Helper method for showing toast messages
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    private void navigateToLoginActivity() {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    private void navigateToProfileSetupActivity() {
-        Intent intent = new Intent(MainActivity.this, ProfileSetupActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         long currentTime = System.currentTimeMillis();
@@ -174,46 +74,37 @@ public class MainActivity extends BaseActivity {
 
         backPressCounter++;
 
+<<<<<<<<< Temporary merge branch 1
+        if (backPressCounter == 2) {
+            Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
+        } else if (backPressCounter >= 3) {
+            finishAffinity();
+            return;
+        }
+
+        lastBackPressTime = currentTime;
+=========
         if (backPressCounter == 1) {
             Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
         } else if (backPressCounter >= 2) {
-            super.onBackPressed();
             finishAffinity();
         }
+
         lastBackPressTime = currentTime;
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        // Check if user is signed in (non-null) and email is verified
-//        if (user == null || !user.isEmailVerified()) {
-//            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//            startActivity(intent);
-//            finish(); // Prevents user from returning to MainActivity without authentication
-//        } else {
-//            // User is signed in and email is verified, load main content
-//            loadMainContent();
-//            // Assuming this method sets up your MainActivity content
-//        }
-//    }
+    // Method for setting the fragment without adding the transaction to the back stack
+    private void setFragment(Fragment fragment) {
+        // Ensure the container is cleared of all fragments. This might not be necessary
+        // for a simple replace operation, but included here for clarity.
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null && user.isEmailVerified()) {
-            return;
-        } else {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        // Perform the replace transaction
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_id, fragment)
+                // Optionally, you can add the transaction to the back stack if you want to navigate back.
+                // .addToBackStack(null)
+                .commitAllowingStateLoss(); // Using commitAllowingStateLoss() to handle edge cases where state might be lost.
+>>>>>>>>> Temporary merge branch 2
     }
-
-
 }
-
-

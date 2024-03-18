@@ -1,142 +1,154 @@
 package com.example.fitcarehub;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Patterns;
-import android.widget.Button;
+import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private EditText editTextEmail;
-    private EditText editTextPassword;
-    private Button buttonSignUp;
-    private TextView loginRedirectText, continueAsGuest;
+    private EditText editTextEmail, editTextPassword;
     private FirebaseAuth mAuth;
+<<<<<<<<< Temporary merge branch 1
+=========
     private int backPressCounter = 0;
     private long lastBackPressTime = 0;
-
-    @Override
-    public void onBackPressed() {
-        backPressCounter++;
-        if (backPressCounter == 2) {
-            Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
-        }
-        if (backPressCounter == 3) {
-            finishAffinity();
-            return;
-        }
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBackPressTime > 2000) {
-            backPressCounter = 1;
-        }
-        lastBackPressTime = currentTime;
-    }
+>>>>>>>>> Temporary merge branch 2
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-
-        editTextEmail = findViewById(R.id.signup_email);
-        editTextPassword = findViewById(R.id.signup_password);
-        buttonSignUp = findViewById(R.id.signup_button);
-        loginRedirectText = findViewById(R.id.loginRedirectText);
-        continueAsGuest = findViewById(R.id.continueAsGuest);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = getIntent().getBooleanExtra("isLoggedIn", false);
-
-        if (isLoggedIn) {
-            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
-        loginRedirectText.setOnClickListener(v -> {
-            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-            startActivity(intent);
-        });
-
-        continueAsGuest.setOnClickListener(v -> {
-            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-            startActivity(intent);
-        });
-
-        buttonSignUp.setOnClickListener(v -> signUpUser());
+        initUI();
+        setupListeners();
     }
 
-    private void signUpUser() {
+    private void initUI() {
+        editTextEmail = findViewById(R.id.signup_email);
+        editTextPassword = findViewById(R.id.signup_password);
+        mAuth = FirebaseAuth.getInstance();
+    }
+
+    private void setupListeners() {
+        findViewById(R.id.signup_button).setOnClickListener(v -> registerUser());
+        findViewById(R.id.loginRedirectText).setOnClickListener(v -> redirectToLogin());
+        findViewById(R.id.continueAsGuest).setOnClickListener(v -> continueAsGuest());
+    }
+
+    private void registerUser() {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
-        if (email.isEmpty()) {
-            editTextEmail.setError("Email is required");
-            editTextEmail.requestFocus();
-            return;
-        }
+        if (!isInputValid(email, password)) return;
 
-        if (password.isEmpty()) {
-            editTextPassword.setError("Password is required");
-            editTextPassword.requestFocus();
-            return;
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            editTextEmail.setError("Please enter a valid email");
-            editTextEmail.requestFocus();
-            return;
-        }
-
-        if (password.length() < 6) {
-            editTextPassword.setError("Minimum length of password should be 6");
-            editTextPassword.requestFocus();
-            return;
-        }
-
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                FirebaseUser user = mAuth.getCurrentUser();
-                if (user != null) {
-                    sendVerificationEmail(user);
-                    Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                    intent.putExtra("isGuest", false);
-                    startActivity(intent);
-                    finish();
-                }
+                saveEmail(email);
+                sendVerificationEmail();
             } else {
                 Toast.makeText(SignUpActivity.this, "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
-    private void sendVerificationEmail(FirebaseUser user) {
-        user.sendEmailVerification().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(SignUpActivity.this, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(SignUpActivity.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private boolean isInputValid(String email, String password) {
+        boolean valid = true;
+
+        // Validate email and password. Similar to LoginActivity.
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            editTextEmail.setError("Enter a valid email address");
+            valid = false;
+        } else {
+            editTextEmail.setError(null);
+        }
+
+        if (password.isEmpty() || password.length() < 6) {
+            editTextPassword.setError("Password must be at least 6 characters");
+            valid = false;
+        } else {
+            editTextPassword.setError(null);
+        }
+
+        return valid;
+    }
+
+    private void sendVerificationEmail() {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user != null) {
+            user.sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(SignUpActivity.this, "Verification email sent",
+                                        Toast.LENGTH_SHORT).show();
+                                redirectToLogin();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, "Failed to send verification email",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void redirectToLogin() {
+        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+        startActivity(intent);
+<<<<<<<<< Temporary merge branch 1
+=========
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+>>>>>>>>> Temporary merge branch 2
+        finish();
+    }
+
+    private void continueAsGuest() {
+        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+        startActivity(intent);
+<<<<<<<<< Temporary merge branch 1
+=========
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+>>>>>>>>> Temporary merge branch 2
+        finish();
     }
 
     private void saveEmail(String email) {
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email", email);
         editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+<<<<<<<<< Temporary merge branch 1
+        // Handle onBackPressed if required
+        super.onBackPressed();
+=========
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBackPressTime > 2000) {
+            backPressCounter = 0;
+        }
+
+        backPressCounter++;
+
+        if (backPressCounter == 1) {
+            Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
+        } else if (backPressCounter >= 2) {
+            finishAffinity();
+            return;
+        }
+
+        lastBackPressTime = currentTime;
+>>>>>>>>> Temporary merge branch 2
     }
 }
