@@ -17,11 +17,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     private EditText editTextEmail, editTextPassword;
     private FirebaseAuth mAuth;
-<<<<<<<<< Temporary merge branch 1
-=========
     private int backPressCounter = 0;
     private long lastBackPressTime = 0;
->>>>>>>>> Temporary merge branch 2
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,20 +101,14 @@ public class SignUpActivity extends AppCompatActivity {
     private void redirectToLogin() {
         Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
         startActivity(intent);
-<<<<<<<<< Temporary merge branch 1
-=========
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
->>>>>>>>> Temporary merge branch 2
         finish();
     }
 
     private void continueAsGuest() {
         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
         startActivity(intent);
-<<<<<<<<< Temporary merge branch 1
-=========
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
->>>>>>>>> Temporary merge branch 2
         finish();
     }
 
@@ -130,10 +121,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-<<<<<<<<< Temporary merge branch 1
-        // Handle onBackPressed if required
-        super.onBackPressed();
-=========
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastBackPressTime > 2000) {
             backPressCounter = 0;
@@ -142,13 +129,11 @@ public class SignUpActivity extends AppCompatActivity {
         backPressCounter++;
 
         if (backPressCounter == 1) {
-            Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
         } else if (backPressCounter >= 2) {
             finishAffinity();
-            return;
         }
 
         lastBackPressTime = currentTime;
->>>>>>>>> Temporary merge branch 2
     }
 }
