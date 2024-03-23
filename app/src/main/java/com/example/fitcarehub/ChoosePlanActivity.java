@@ -5,12 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class ChoosePlanActivity extends AppCompatActivity {
 
-    private int backPressCounter = 0;
-    private long lastBackPressTime = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,46 +19,28 @@ public class ChoosePlanActivity extends AppCompatActivity {
         loseFatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String plan = "loseFat";
-                Intent intent = new Intent(ChoosePlanActivity.this, ChoosePlaceActivity.class);
-                intent.putExtra("plan", plan);
-                startActivity(intent);
-                finish();
+                navigateToChoosePlaceActivity("loseFat");
             }
         });
 
         gainMuscleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String plan = "gainMuscle";
-                Intent intent = new Intent(ChoosePlanActivity.this, ChoosePlaceActivity.class);
-                intent.putExtra("plan", plan);
-                startActivity(intent);
-                finish();
+                navigateToChoosePlaceActivity("gainMuscle");
             }
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBackPressTime > 2000) {
-            backPressCounter = 0;
-        }
-
-        backPressCounter++;
-
-        if (backPressCounter == 1) {
-            Toast.makeText(this, "Нажмите еще раз, чтобы выйти", Toast.LENGTH_SHORT).show();
-        } else if (backPressCounter >= 2) {
-            finishAffinity();
-            return;
-        }
-
-        lastBackPressTime = currentTime;
+    private void navigateToChoosePlaceActivity(String plan) {
+        Intent intent = new Intent(ChoosePlanActivity.this, ChoosePlaceActivity.class);
+        intent.putExtra("plan", plan);
+        startActivity(intent);
+        // Consider if you really need to call finish() here. If you want the user to be able to navigate back to this activity, you might not want to call finish().
+        // finish();
     }
 
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

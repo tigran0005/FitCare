@@ -32,7 +32,10 @@ public class MainActivity extends BaseActivity {
     };
     private int[] buttonColors = new int[]{R.color.normal_text_color, R.color.purpur};
 
+    private String plan, place;
     FirebaseFirestore firestore;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,30 +70,40 @@ public class MainActivity extends BaseActivity {
                     DocumentSnapshot document = task.getResult();
                     String name = document.getString("name");
                     String surname = document.getString("surname");
-                    String email = document.getString("email");
+                    if (name != null && !name.isEmpty() && surname != null && !surname.isEmpty() && plan != null && !plan.isEmpty() && place != null && !place.isEmpty()) {
 
-                    if(email == null || email.isEmpty()){
-                        Toast.makeText(MainActivity.this, "Email not found in Firestore", Toast.LENGTH_SHORT).show();
-                        email = user.getEmail();
+                        String email = document.getString("email");
+                        if(email == null || email.isEmpty()){
+                            Toast.makeText(MainActivity.this, "Email not found in Firestore", Toast.LENGTH_SHORT).show();
+                            email = user.getEmail();
+                        }
+                        setupUIBasedOnUserProfile(name, surname, email);
+                    } else {
+
+                        navigateToProfileSetupActivity();
                     }
-
-                    setupUIBasedOnUserProfile(name, surname, email);
                 } else {
+
                     navigateToProfileSetupActivity();
                 }
             });
         } else {
+
             navigateToLoginActivity();
         }
     }
 
 
-    private void setupUIBasedOnUserProfile(String name, String surname, String email) {
+
+    private void setupUIBasedOnUserProfile(String name, String surname, String email
+    ) {
         boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
         Bundle bundle = new Bundle();
-        if (!isGuest && name != null && surname != null && email != null) {
+        if (!isGuest && name != null && surname != null && email != null && place != null && plan != null) {
             bundle.putString("name", name);
             bundle.putString("surname", surname);
+            bundle.putString("plan", plan);
+            bundle.putString("place", place);
             bundle.putString("email", email);
 
         } else {
@@ -202,16 +215,15 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
 
-        if (user != null && user.isEmailVerified()) {
-            return;
-        } else {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+        if (!isGuest) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null || !user.isEmailVerified()) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
     }
-
-
 }

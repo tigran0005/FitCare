@@ -107,10 +107,11 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void continueAsGuest() {
         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+        intent.putExtra("isGuest", true);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();
     }
+
 
     private void saveEmail(String email) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);

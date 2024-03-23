@@ -65,7 +65,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void navigateToChoosePlaceActivity(String name, String surname) {
-        Intent intent = new Intent(ProfileSetupActivity.this, ChoosePlaceActivity.class);
+        Intent intent = new Intent(ProfileSetupActivity.this, ChoosePlanActivity.class);
         intent.putExtra("name", name);
         intent.putExtra("surname", surname);
         startActivity(intent);
