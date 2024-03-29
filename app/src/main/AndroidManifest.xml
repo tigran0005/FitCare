@@ -12,7 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FitCareHub"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PreWorkoutActivity"
+            android:exported="false" />
         <activity
             android:name=".ChoosePlaceActivity"
             android:exported="false" />
@@ -34,16 +39,16 @@
             android:name=".SignUpActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
-        android:screenOrientation="portrait">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-</application>
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-    </manifest>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

@@ -73,6 +73,18 @@ public class EditAccountActivity extends AppCompatActivity {
             }
         });
 
+        changePasswordArrow.setOnClickListener(v -> {
+            Intent intent = new Intent(EditAccountActivity.this, ChangePasswordActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        changePasswordText.setOnClickListener(v -> {
+            Intent intent = new Intent(EditAccountActivity.this, ChangePasswordActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
 
         editPhotoText.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

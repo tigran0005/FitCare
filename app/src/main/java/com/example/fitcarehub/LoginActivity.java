@@ -94,11 +94,9 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = auth.getCurrentUser();
                     if (user != null && user.isEmailVerified()) {
-                        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean("isLoggedIn", true);
+                        SharedPreferences.Editor editor = getSharedPreferences("UserPrefs", MODE_PRIVATE).edit();
+                        editor.putBoolean("isLogged", true);
                         editor.apply();
-
                         navigateToMainActivity();
                     } else {
                         Toast.makeText(LoginActivity.this, "Please verify your email.", Toast.LENGTH_SHORT).show();
@@ -236,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 intent = new Intent(LoginActivity.this, ProfileSetupActivity.class);
                             }
-                            intent.putExtra("isLoggedIn", true);
+
                             startActivity(intent);
                             finish();
                         }

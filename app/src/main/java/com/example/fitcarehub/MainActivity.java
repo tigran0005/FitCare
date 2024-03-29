@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -15,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity {
     private int backPressCounter = 0;
     private long lastBackPressTime = 0;
     private Button activeButton = null;
@@ -32,10 +34,7 @@ public class MainActivity extends BaseActivity {
     };
     private int[] buttonColors = new int[]{R.color.normal_text_color, R.color.purpur};
 
-    private String plan, place;
     FirebaseFirestore firestore;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +43,29 @@ public class MainActivity extends BaseActivity {
 
         firestore = FirebaseFirestore.getInstance();
 
+        Intent intent = getIntent();
+        String plan = intent.getStringExtra("plan");
+        String place = intent.getStringExtra("place");
+
         buttons[0] = findViewById(R.id.button_home);
         buttons[1] = findViewById(R.id.button_profile);
         buttons[2] = findViewById(R.id.button_settings);
 
         initButtons();
 
-        loadUserProfile();
+        if (!isUserLoggedIn()) {
+            navigateToLoginActivity();
+        } else {
+            loadUserProfile();
+        }
     }
+    private boolean isUserLoggedIn() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        return sharedPreferences.getBoolean("isLogged", false);
+    }
+
+
+
 
     private void initButtons() {
         setLargerIconAndTextColor(buttons[0], buttonActiveIcons[0], buttonColors[1]);
@@ -61,53 +75,56 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+//    private void loadUserProfile() {
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        if (user != null) {
+//            String userId = user.getUid();
+//            FirebaseFirestore db = FirebaseFirestore.getInstance();
+//            db.collection("Users").document(userId).get().addOnCompleteListener(task -> {
+//                if (task.isSuccessful() && task.getResult() != null) {
+//                    DocumentSnapshot document = task.getResult();
+//                    String name = document.getString("name");
+//                    String surname = document.getString("surname");
+//                    String email = document.getString("email");
+//                    setupUIBasedOnUserProfile(name, surname);
+//                } else {
+//                    navigateToProfileSetupActivity();
+//                }
+//            });
+//        } else {
+//            navigateToLoginActivity();
+//        }
+//    }
+
     private void loadUserProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+        if(user != null) {
             String userId = user.getUid();
-            firestore.collection("Users").document(userId).get().addOnCompleteListener(task -> {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("Users").document(userId).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
                     DocumentSnapshot document = task.getResult();
                     String name = document.getString("name");
                     String surname = document.getString("surname");
-                    if (name != null && !name.isEmpty() && surname != null && !surname.isEmpty() && plan != null && !plan.isEmpty() && place != null && !place.isEmpty()) {
-
-                        String email = document.getString("email");
-                        if(email == null || email.isEmpty()){
-                            Toast.makeText(MainActivity.this, "Email not found in Firestore", Toast.LENGTH_SHORT).show();
-                            email = user.getEmail();
-                        }
-                        setupUIBasedOnUserProfile(name, surname, email);
-                    } else {
-
-                        navigateToProfileSetupActivity();
-                    }
+                    setupUIBasedOnUserProfile(name, surname);
                 } else {
-
                     navigateToProfileSetupActivity();
                 }
             });
-        } else {
-
-            navigateToLoginActivity();
         }
+
     }
 
-
-
-    private void setupUIBasedOnUserProfile(String name, String surname, String email
-    ) {
+    private void setupUIBasedOnUserProfile(String name, String surname) {
         boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
         Bundle bundle = new Bundle();
-        if (!isGuest && name != null && surname != null && email != null && place != null && plan != null) {
+        if (!isGuest && name != null && surname != null) {
             bundle.putString("name", name);
             bundle.putString("surname", surname);
-            bundle.putString("plan", plan);
-            bundle.putString("place", place);
-            bundle.putString("email", email);
-
         } else {
             bundle.putBoolean("isGuest", true);
+
+//            setUpGuestMode();
         }
 
         MainFragment mainFragment = new MainFragment();
@@ -181,7 +198,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBackPressTime > 2000) {
+        if (currentTime - lastBackPressTime > 2000) { // 2 seconds
             backPressCounter = 0;
         }
 
@@ -196,34 +213,6 @@ public class MainActivity extends BaseActivity {
         lastBackPressTime = currentTime;
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        // Check if user is signed in (non-null) and email is verified
-//        if (user == null || !user.isEmailVerified()) {
-//            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//            startActivity(intent);
-//            finish(); // Prevents user from returning to MainActivity without authentication
-//        } else {
-//            // User is signed in and email is verified, load main content
-//            loadMainContent();
-//            // Assuming this method sets up your MainActivity content
-//        }
-//    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        boolean isGuest = getIntent().getBooleanExtra("isGuest", false);
-
-        if (!isGuest) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null || !user.isEmailVerified()) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }
-    }
 }
+

@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="someColor">#20235861</color>
     <color name="purpur">#7E75E6</color>
+    <color name="matching_pupur">#BAA8FF</color>
     <color name="pre_purpur">#CFCCF6</color>
     <color name="normal_text_color">#C0C0C0</color>
     <color name="dark_mode_text_color">@color/white</color>

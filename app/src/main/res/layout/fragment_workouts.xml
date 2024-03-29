@@ -67,6 +67,7 @@
                 app:layout_constraintTop_toBottomOf="@id/header">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/armsConstraintLayout"
                     android:layout_width="325dp"
                     android:layout_height="150dp"
                     android:layout_marginTop="16dp"
