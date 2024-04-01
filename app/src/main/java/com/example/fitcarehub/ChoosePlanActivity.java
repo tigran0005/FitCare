@@ -35,8 +35,6 @@ public class ChoosePlanActivity extends AppCompatActivity {
         Intent intent = new Intent(ChoosePlanActivity.this, ChoosePlaceActivity.class);
         intent.putExtra("plan", plan);
         startActivity(intent);
-        // Consider if you really need to call finish() here. If you want the user to be able to navigate back to this activity, you might not want to call finish().
-        // finish();
     }
 
     @Override

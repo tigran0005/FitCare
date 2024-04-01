@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadUserProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null) {
+        if(user != null ) {
             String userId = user.getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("Users").document(userId).get().addOnCompleteListener(task -> {
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
             bundle.putString("surname", surname);
         } else {
             bundle.putBoolean("isGuest", true);
-
+//            Toast.makeText(this, "Guest mode", Toast.LENGTH_SHORT).show();
 //            setUpGuestMode();
         }
 
@@ -150,11 +150,11 @@ public class MainActivity extends AppCompatActivity {
 
         buttons[2].setOnClickListener(v -> {
             ProfileFragment profileFragment = new ProfileFragment();
-            profileFragment.setArguments(userBundle);
             switchFragment(profileFragment);
             setActiveButton(2);
         });
     }
+
 
     private void setLargerIconAndTextColor(Button button, int drawableId, int textColorId) {
         Drawable drawable = ContextCompat.getDrawable(this, drawableId);
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBackPressTime > 2000) { // 2 seconds
+        if (currentTime - lastBackPressTime > 2000) {
             backPressCounter = 0;
         }
 

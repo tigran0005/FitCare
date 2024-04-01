@@ -79,6 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                intent.putExtra("isGuest", true);
                 startActivity(intent);
             }
         });
@@ -96,7 +97,6 @@ public class SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task task) {
                                 if (task.isSuccessful()) {
-                                    // Сохраняем адрес электронной почты
                                     saveEmail(email);
                                     sendVerificationEmail();
                                 } else {

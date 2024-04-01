@@ -31,8 +31,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_change_password);
 
         changePasswordOldPassword = findViewById(R.id.changePasswordOldPassword);
-        changePasswordNewPassword = findViewById(R.id.changePasswordNewPassowrd); // Fixed Typo in ID
-        changePasswordConfirmNewPassword = findViewById(R.id.changePasswordConfrimNewPassword); // Fixed Typo in ID
+        changePasswordNewPassword = findViewById(R.id.changePasswordNewPassowrd);
+        changePasswordConfirmNewPassword = findViewById(R.id.changePasswordConfrimNewPassword);
         saveButton = findViewById(R.id.saveButtonchangePassword);
         arrow = findViewById(R.id.backToEditAccountArrow);
 

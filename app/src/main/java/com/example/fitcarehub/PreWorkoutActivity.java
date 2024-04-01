@@ -18,10 +18,17 @@ public class PreWorkoutActivity extends AppCompatActivity {
 
 
         arrow.setOnClickListener(v -> {
-            Intent intent = new Intent(PreWorkoutActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent(PreWorkoutActivity.this, MainActivity.class);
+//            startActivity(intent);
+//            finish();
+            onBackPressed();
         });
 
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
