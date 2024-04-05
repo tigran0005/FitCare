@@ -17,21 +17,25 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.w3c.dom.Text;
+
 public class MainFragment extends Fragment {
     ImageView profilePicture;
+    TextView finishedText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         setImageToProfilePicture();
+        updateWorkoutCountUI();
 
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         profilePicture = view.findViewById(R.id.profileImageMainFragment);
         TextView welcomeTextView = view.findViewById(R.id.Welcome);
         ConstraintLayout constraintLayout = view.findViewById(R.id.mainFragmentArms);
-
+        finishedText = view.findViewById(R.id.finishedText);
 
 
         constraintLayout.setOnClickListener(new View.OnClickListener() {
@@ -86,4 +90,23 @@ public class MainFragment extends Fragment {
             });
         }
     }
+    private void updateWorkoutCountUI() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            db.collection("Users").document(user.getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    DocumentSnapshot document = task.getResult();
+                    Long finishedWorkouts = document.getLong("finishedWorkouts");
+                    if (finishedWorkouts != null) {
+                        finishedText.setText(String.format("%d", finishedWorkouts));
+                    } else {
+                        finishedText.setText("0");
+                    }
+                }
+            });
+        }
+    }
+
 }

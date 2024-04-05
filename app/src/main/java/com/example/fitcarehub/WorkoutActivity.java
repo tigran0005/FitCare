@@ -11,6 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -83,8 +87,26 @@ public class WorkoutActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            Toast.makeText(this, "This is the last workout!", Toast.LENGTH_SHORT).show();
+            increaseTheFinishedCount();
         }
+    }
+
+    private void increaseTheFinishedCount() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            DocumentReference userDocRef = db.collection("Users").document(user.getUid());
+
+            userDocRef.get().addOnSuccessListener(documentSnapshot -> {
+                Long finishedWorkouts = documentSnapshot.getLong("finishedWorkouts");
+
+                if (finishedWorkouts == null) finishedWorkouts = 0L;
+                userDocRef.update("finishedWorkouts", finishedWorkouts + 1);
+            });
+        }
+        Intent intent = new Intent(this, WorkoutsFragment.class);
+        startActivity(intent);
     }
 
     private void navigateBackToPreWorkout() {
