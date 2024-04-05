@@ -8,7 +8,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -30,13 +31,13 @@
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="15dp"
                     android:src="@drawable/__icon__arrow_forward_ios_" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="150dp"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
-
 
                     <TextView
                         android:layout_width="match_parent"
@@ -126,6 +127,7 @@
                         android:textColor="@color/normal_text_color"/>
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="50dp"
@@ -152,261 +154,20 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/Exercises"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/exercisesRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/info"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintTop_toBottomOf="@id/info">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Exercise"/>
-
-                <LinearLayout
-                    android:id="@+id/inner_exercises"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <LinearLayout
-                        android:id="@+id/card1"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        >
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
-                            android:layout_weight="2">
-
-                            <pl.droidsonroids.gif.GifImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/cardiowomangif" />
-
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center_vertical"
-                            >
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="JUMPING JACKS"
-                                android:gravity="center_vertical"
-                                android:textStyle="bold"
-                                android:textSize="15sp"
-                                android:layout_marginStart="10dp"
-                                />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:textColor="@color/normal_text_color"
-                                android:text="00:20"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/card2"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        >
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
-                            android:layout_weight="2">
-
-                            <pl.droidsonroids.gif.GifImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/cardiowomangif" />
-
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center_vertical"
-                            >
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="JUMPING JACKS"
-                                android:gravity="center_vertical"
-                                android:textStyle="bold"
-                                android:textSize="15sp"
-                                android:layout_marginStart="10dp"
-                                />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:textColor="@color/normal_text_color"
-                                android:text="00:20"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:id="@+id/card"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        >
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
-                            android:layout_weight="2">
-
-                            <pl.droidsonroids.gif.GifImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/cardiowomangif" />
-
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center_vertical"
-                            >
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="JUMPING JACKS"
-                                android:gravity="center_vertical"
-                                android:textStyle="bold"
-                                android:textSize="15sp"
-                                android:layout_marginStart="10dp"
-                                />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:textColor="@color/normal_text_color"
-                                android:text="00:20"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/card4"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        >
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
-                            android:layout_weight="2">
-
-                            <pl.droidsonroids.gif.GifImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/cardiowomangif" />
-
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center_vertical"
-                            >
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="JUMPING JACKS"
-                                android:gravity="center_vertical"
-                                android:textStyle="bold"
-                                android:textSize="15sp"
-                                android:layout_marginStart="10dp"
-                                />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:textColor="@color/normal_text_color"
-                                android:text="00:20"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:id="@+id/card5"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        >
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
-                            android:layout_weight="2">
-
-                            <pl.droidsonroids.gif.GifImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/cardiowomangif" />
-
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center_vertical"
-                            >
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="JUMPING JACKS"
-                                android:gravity="center_vertical"
-                                android:textStyle="bold"
-                                android:textSize="15sp"
-                                android:layout_marginStart="10dp"
-                                />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:textColor="@color/normal_text_color"
-                                android:text="00:20"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-
-
-                </LinearLayout>
-            </LinearLayout>
-
+                android:layout_marginEnd="10dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+
 
     <Button
         android:id="@+id/myStickyButton"
@@ -415,9 +176,7 @@
         android:text="Start"
         android:layout_gravity="bottom"
         android:layout_margin="10dp"
-        android:layout_marginTop="30dp"
         android:backgroundTint="@color/purpur"
         android:textSize="18sp"
         app:cornerRadius="20dp" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

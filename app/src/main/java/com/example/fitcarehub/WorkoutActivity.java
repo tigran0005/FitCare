@@ -3,117 +3,93 @@ package com.example.fitcarehub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import java.util.List;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.List;
+
 import pl.droidsonroids.gif.GifImageView;
 
 public class WorkoutActivity extends AppCompatActivity {
-    int currentWorkoutIndex = 0;
-    List<WorkoutItem> currentWorkoutItems;
+
+    private int currentWorkoutIndex = 0;
+    private List<WorkoutItem> currentWorkoutItems;
     private TextView exerciseNameTextView, exerciseCountTextView;
     private ImageView backArrow, forwardArrow, backToPreWorkoutArrow;
     private GifImageView gifImageView;
-    private Button doneButton;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
+        bindViews();
+        loadDataFromIntent();
+        setupWorkoutItems();
+        setupViewListeners();
+        updateUI();
+    }
 
+    private void bindViews() {
         exerciseNameTextView = findViewById(R.id.workoutActivityExerciseName);
+        exerciseCountTextView = findViewById(R.id.exercisesCount);
+        gifImageView = findViewById(R.id.workoutActivityGif);
         backArrow = findViewById(R.id.arrowBack);
         forwardArrow = findViewById(R.id.arrowNext);
         backToPreWorkoutArrow = findViewById(R.id.backToPreWorkoutArrow);
-        exerciseCountTextView = findViewById(R.id.exercisesCount);
-        gifImageView = findViewById(R.id.workoutActivityGif);
-        doneButton = findViewById(R.id.doneButton);
+        findViewById(R.id.doneButton).setOnClickListener(v -> navigateToRestActivity(false));
+    }
 
+    private void loadDataFromIntent() {
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("CurrentWorkoutIndex")) {
-            currentWorkoutIndex = intent.getIntExtra("CurrentWorkoutIndex", 0);
-        }
+        currentWorkoutIndex = intent != null ? intent.getIntExtra("CurrentWorkoutIndex", 0) : 0;
+    }
 
+    private void setupWorkoutItems() {
         Workout armsWorkout = new Workout("Arms");
-        armsWorkout.addWorkoutItem(new WorkoutItem("https://images.ctfassets.net/8urtyqugdt2l/4hhf4xvRCpIeqU0UsdqgcQ/840ab4343d9e820c691b281fdd9ce759/_uploads_1571836981-barbell-bicep-curl.gif", "Bicep Curls", 0, 15, 60));
-        armsWorkout.addWorkoutItem(new WorkoutItem("https://images.ctfassets.net/8urtyqugdt2l/4hhf4xvRCpIeqU0UsdqgcQ/840ab4343d9e820c691b281fdd9ce759/_uploads_1571836981-barbell-bicep-curl.gif", "Bicep Curls", 0, 12, 60));
-        armsWorkout.addWorkoutItem(new WorkoutItem("https://images.ctfassets.net/8urtyqugdt2l/4hhf4xvRCpIeqU0UsdqgcQ/840ab4343d9e820c691b281fdd9ce759/_uploads_1571836981-barbell-bicep-curl.gif", "Bicep Curls", 0, 10, 60));
+        armsWorkout.addWorkoutItem(new WorkoutItem("https://i.pinimg.com/originals/8c/53/27/8c532774e4e1c524576bf1fb829ad895.gif", "Bicep Curls", 0, 15, 60));
+        armsWorkout.addWorkoutItem(new WorkoutItem("https://i.pinimg.com/originals/8c/53/27/8c532774e4e1c524576bf1fb829ad895.gif", "Bicep Curls", 0, 12, 60));
+        armsWorkout.addWorkoutItem(new WorkoutItem("https://i.pinimg.com/originals/8c/53/27/8c532774e4e1c524576bf1fb829ad895.gif", "Bicep Curls", 0, 10, 60));
         currentWorkoutItems = armsWorkout.getItems();
+    }
 
-        if (!currentWorkoutItems.isEmpty()) {
+    private void setupViewListeners() {
+        backArrow.setOnClickListener(v -> navigateToPreviousWorkout());
+        forwardArrow.setOnClickListener(v -> navigateToRestActivity(false));
+        backToPreWorkoutArrow.setOnClickListener(v -> navigateBackToPreWorkout());
+    }
+
+    private void navigateToPreviousWorkout() {
+        if (currentWorkoutIndex > 0) {
+            currentWorkoutIndex--;
             updateUI();
         }
+    }
 
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentWorkoutIndex > 0) {
-                    currentWorkoutIndex--;
-                    updateUI();
-                }
+    private void navigateToRestActivity(boolean isDoneClicked) {
+        if (currentWorkoutIndex < currentWorkoutItems.size() - 1 || isDoneClicked) {
+            if (!isDoneClicked) {
+                currentWorkoutIndex++;
             }
+            WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
+            Intent intent = new Intent(this, RestActivity.class);
+            intent.putExtra("NextWorkoutIndex", currentWorkoutIndex);
+            intent.putExtra("RestTimeInSeconds", currentItem.getRestTime());
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, "This is the last workout!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
-
-        });
-
-        forwardArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToRestActivity();
-            }
-
-            private void navigateToRestActivity() {
-                if (currentWorkoutIndex >= 0 && currentWorkoutIndex < currentWorkoutItems.size()) {
-                    WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
-                    int restTime = currentItem.getRestTime();
-
-                    Intent intent = new Intent(WorkoutActivity.this, RestActivity.class);
-                    int nextWorkoutIndex = currentWorkoutIndex < currentWorkoutItems.size() - 1 ? currentWorkoutIndex + 1 : currentWorkoutIndex;
-                    intent.putExtra("NextWorkoutIndex", nextWorkoutIndex);
-                    intent.putExtra("RestTimeInSeconds", restTime);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-
-        });
-
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToRestActivity();
-            }
-
-            private void navigateToRestActivity() {
-                Intent intent = new Intent(WorkoutActivity.this, RestActivity.class);
-                int nextWorkoutIndex = currentWorkoutIndex < currentWorkoutItems.size() - 1 ? currentWorkoutIndex + 1 : currentWorkoutIndex;
-                intent.putExtra("NextWorkoutIndex", nextWorkoutIndex);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        backToPreWorkoutArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(WorkoutActivity.this, PreWorkoutActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-
-
-
+    private void navigateBackToPreWorkout() {
+        startActivity(new Intent(this, PreWorkoutActivity.class));
+        finish();
     }
 
     private void updateUI() {
