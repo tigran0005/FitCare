@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -90,12 +92,14 @@ public class MainFragment extends Fragment {
             });
         }
     }
+
     private void updateWorkoutCountUI() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
-            db.collection("Users").document(user.getUid()).get().addOnCompleteListener(task -> {
+            String userId = user.getUid();
+            db.collection("Users").document(userId).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
                     DocumentSnapshot document = task.getResult();
                     Long finishedWorkouts = document.getLong("finishedWorkouts");
@@ -108,5 +112,13 @@ public class MainFragment extends Fragment {
             });
         }
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setImageToProfilePicture();
+        updateWorkoutCountUI();
+    }
+
 
 }

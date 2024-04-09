@@ -97,17 +97,19 @@ public class WorkoutActivity extends AppCompatActivity {
 
         if (user != null) {
             DocumentReference userDocRef = db.collection("Users").document(user.getUid());
-
             userDocRef.get().addOnSuccessListener(documentSnapshot -> {
                 Long finishedWorkouts = documentSnapshot.getLong("finishedWorkouts");
-
                 if (finishedWorkouts == null) finishedWorkouts = 0L;
-                userDocRef.update("finishedWorkouts", finishedWorkouts + 1);
+                userDocRef.update("finishedWorkouts", finishedWorkouts + 1)
+                        .addOnSuccessListener(aVoid -> {
+                            Intent intent = new Intent(this, WorkoutsFragment.class);
+                            startActivity(intent);
+                        })
+                        .addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Failed to update workout count", Toast.LENGTH_SHORT).show());
             });
         }
-        Intent intent = new Intent(this, WorkoutsFragment.class);
-        startActivity(intent);
     }
+
 
     private void navigateBackToPreWorkout() {
         startActivity(new Intent(this, PreWorkoutActivity.class));
