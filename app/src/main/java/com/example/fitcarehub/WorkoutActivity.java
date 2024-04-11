@@ -46,6 +46,7 @@ public class WorkoutActivity extends AppCompatActivity {
         backArrow = findViewById(R.id.arrowBack);
         forwardArrow = findViewById(R.id.arrowNext);
         backToPreWorkoutArrow = findViewById(R.id.backToPreWorkoutArrow);
+
         findViewById(R.id.doneButton).setOnClickListener(v -> navigateToRestActivity(false));
     }
 
@@ -84,12 +85,17 @@ public class WorkoutActivity extends AppCompatActivity {
             Intent intent = new Intent(this, RestActivity.class);
             intent.putExtra("NextWorkoutIndex", currentWorkoutIndex);
             intent.putExtra("RestTimeInSeconds", currentItem.getRestTime());
+            intent.putExtra("TotalWorkouts", currentWorkoutItems.size());
+            intent.putExtra("ExerciseName", currentItem.getName());
+            intent.putExtra("ExerciseCount", currentItem.getCount());
+            intent.putExtra("ExerciseGif", currentItem.getGif());
             startActivity(intent);
             finish();
         } else {
             increaseTheFinishedCount();
         }
     }
+
 
     private void increaseTheFinishedCount() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -116,15 +122,20 @@ public class WorkoutActivity extends AppCompatActivity {
         finish();
     }
 
+
     private void updateUI() {
         if (currentWorkoutIndex >= 0 && currentWorkoutIndex < currentWorkoutItems.size()) {
             WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
+
             if (exerciseNameTextView != null) {
                 exerciseNameTextView.setText(currentItem.getName());
             }
+
+
             if (exerciseCountTextView != null) {
                 exerciseCountTextView.setText("x " + currentItem.getCount());
             }
+
             if (gifImageView != null) {
                 RequestOptions options = new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -138,4 +149,5 @@ public class WorkoutActivity extends AppCompatActivity {
             }
         }
     }
+
 }
