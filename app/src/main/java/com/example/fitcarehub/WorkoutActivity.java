@@ -15,7 +15,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.droidsonroids.gif.GifImageView;
@@ -23,7 +25,7 @@ import pl.droidsonroids.gif.GifImageView;
 public class WorkoutActivity extends AppCompatActivity {
 
     private int currentWorkoutIndex = 0;
-    private List<WorkoutItem> currentWorkoutItems;
+    private List<WorkoutItem> currentWorkoutItems = new ArrayList<>();
     private TextView exerciseNameTextView, exerciseCountTextView;
     private ImageView backArrow, forwardArrow, backToPreWorkoutArrow;
     private GifImageView gifImageView;
@@ -33,10 +35,8 @@ public class WorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
         bindViews();
-        loadDataFromIntent();
-        setupWorkoutItems();
+        fetchWorkoutsFromFirestore();
         setupViewListeners();
-        updateUI();
     }
 
     private void bindViews() {
@@ -47,20 +47,31 @@ public class WorkoutActivity extends AppCompatActivity {
         forwardArrow = findViewById(R.id.arrowNext);
         backToPreWorkoutArrow = findViewById(R.id.backToPreWorkoutArrow);
 
-        findViewById(R.id.doneButton).setOnClickListener(v -> navigateToRestActivity(false));
+        findViewById(R.id.doneButton).setOnClickListener(v -> navigateToRestActivity(true));
     }
 
-    private void loadDataFromIntent() {
-        Intent intent = getIntent();
-        currentWorkoutIndex = intent != null ? intent.getIntExtra("CurrentWorkoutIndex", 0) : 0;
-    }
-
-    private void setupWorkoutItems() {
-        Workout armsWorkout = new Workout("Arms");
-        armsWorkout.addWorkoutItem(new WorkoutItem("https://i.pinimg.com/originals/8c/53/27/8c532774e4e1c524576bf1fb829ad895.gif", "Bicep Curls", 0, 15, 60));
-        armsWorkout.addWorkoutItem(new WorkoutItem("https://i.pinimg.com/originals/8c/53/27/8c532774e4e1c524576bf1fb829ad895.gif", "Bicep Curls", 0, 12, 60));
-        armsWorkout.addWorkoutItem(new WorkoutItem("https://i.pinimg.com/originals/8c/53/27/8c532774e4e1c524576bf1fb829ad895.gif", "Bicep Curls", 0, 10, 60));
-        currentWorkoutItems = armsWorkout.getItems();
+    private void fetchWorkoutsFromFirestore() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Workouts").document("UtuipVntK8BQY85OoB1F").collection("Arms1")
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        currentWorkoutItems.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String gif = document.getString("gif");
+                            String name = document.getString("workoutName");
+                            int count = document.getLong("Count").intValue();
+                            int restTime = document.getLong("restTime").intValue();
+                            currentWorkoutItems.add(new WorkoutItem(gif, name, 0, count, restTime));
+                        }
+                        if (!currentWorkoutItems.isEmpty()) {
+                            updateUI();
+                        } else {
+                            Toast.makeText(WorkoutActivity.this, "No workouts found.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(WorkoutActivity.this, "Failed to load workouts.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void setupViewListeners() {
@@ -96,58 +107,47 @@ public class WorkoutActivity extends AppCompatActivity {
         }
     }
 
-
     private void increaseTheFinishedCount() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         if (user != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference userDocRef = db.collection("Users").document(user.getUid());
             userDocRef.get().addOnSuccessListener(documentSnapshot -> {
                 Long finishedWorkouts = documentSnapshot.getLong("finishedWorkouts");
-                if (finishedWorkouts == null) finishedWorkouts = 0L;
-                userDocRef.update("finishedWorkouts", finishedWorkouts + 1)
-                        .addOnSuccessListener(aVoid -> {
-                            Intent intent = new Intent(this, WorkoutsFragment.class);
-                            startActivity(intent);
-                        })
+                if (finishedWorkouts == null) {
+                    finishedWorkouts = 0L;
+                }
+                finishedWorkouts++;
+                userDocRef.update("finishedWorkouts", finishedWorkouts)
+                        .addOnSuccessListener(aVoid -> Toast.makeText(WorkoutActivity.this, "Workout count updated successfully!", Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Failed to update workout count", Toast.LENGTH_SHORT).show());
-            });
+            }).addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Error fetching workout count", Toast.LENGTH_SHORT).show());
+        } else {
+            Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void navigateBackToPreWorkout() {
         startActivity(new Intent(this, PreWorkoutActivity.class));
         finish();
     }
 
-
     private void updateUI() {
-        if (currentWorkoutIndex >= 0 && currentWorkoutIndex < currentWorkoutItems.size()) {
-            WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
-
-            if (exerciseNameTextView != null) {
+        runOnUiThread(() -> {
+            if (currentWorkoutIndex >= 0 && currentWorkoutIndex < currentWorkoutItems.size()) {
+                WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
                 exerciseNameTextView.setText(currentItem.getName());
-            }
-
-
-            if (exerciseCountTextView != null) {
                 exerciseCountTextView.setText("x " + currentItem.getCount());
-            }
 
-            if (gifImageView != null) {
                 RequestOptions options = new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop();
-
                 Glide.with(this)
                         .asGif()
                         .load(currentItem.getGif())
                         .apply(options)
                         .into(gifImageView);
             }
-        }
+        });
     }
-
 }
