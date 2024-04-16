@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import pl.droidsonroids.gif.GifImageView;
@@ -35,8 +36,13 @@ public class WorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
         bindViews();
-        fetchWorkoutsFromFirestore();
         setupViewListeners();
+
+        fetchWorkoutsFromFirestore();
+
+        if (getIntent().hasExtra("CurrentWorkoutIndex")) {
+            currentWorkoutIndex = getIntent().getIntExtra("CurrentWorkoutIndex", 0);
+        }
     }
 
     private void bindViews() {
@@ -61,8 +67,10 @@ public class WorkoutActivity extends AppCompatActivity {
                             String name = document.getString("workoutName");
                             int count = document.getLong("Count").intValue();
                             int restTime = document.getLong("restTime").intValue();
+
                             currentWorkoutItems.add(new WorkoutItem(gif, name, 0, count, restTime));
                         }
+
                         if (!currentWorkoutItems.isEmpty()) {
                             updateUI();
                         } else {
@@ -87,11 +95,10 @@ public class WorkoutActivity extends AppCompatActivity {
         }
     }
 
+
     private void navigateToRestActivity(boolean isDoneClicked) {
-        if (currentWorkoutIndex < currentWorkoutItems.size() - 1 || isDoneClicked) {
-            if (!isDoneClicked) {
-                currentWorkoutIndex++;
-            }
+        if (currentWorkoutIndex < currentWorkoutItems.size() - 1) {
+            currentWorkoutIndex++;
             WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
             Intent intent = new Intent(this, RestActivity.class);
             intent.putExtra("NextWorkoutIndex", currentWorkoutIndex);
@@ -102,9 +109,15 @@ public class WorkoutActivity extends AppCompatActivity {
             intent.putExtra("ExerciseGif", currentItem.getGif());
             startActivity(intent);
             finish();
-        } else {
+        } else if (isDoneClicked || currentWorkoutIndex == currentWorkoutItems.size() - 1) {
             increaseTheFinishedCount();
+            Intent intent = new Intent(WorkoutActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
+
+
+
     }
 
     private void increaseTheFinishedCount() {
@@ -133,21 +146,19 @@ public class WorkoutActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        runOnUiThread(() -> {
-            if (currentWorkoutIndex >= 0 && currentWorkoutIndex < currentWorkoutItems.size()) {
-                WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
-                exerciseNameTextView.setText(currentItem.getName());
-                exerciseCountTextView.setText("x " + currentItem.getCount());
+        if (currentWorkoutIndex >= 0 && currentWorkoutIndex < currentWorkoutItems.size()) {
+            WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
+            exerciseNameTextView.setText(currentItem.getName());
+            exerciseCountTextView.setText("x " + currentItem.getCount());
 
-                RequestOptions options = new RequestOptions()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop();
-                Glide.with(this)
-                        .asGif()
-                        .load(currentItem.getGif())
-                        .apply(options)
-                        .into(gifImageView);
-            }
-        });
+            RequestOptions options = new RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop();
+            Glide.with(this)
+                    .asGif()
+                    .load(currentItem.getGif())
+                    .apply(options)
+                    .into(gifImageView);
+        }
     }
 }

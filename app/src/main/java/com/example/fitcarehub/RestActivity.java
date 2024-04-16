@@ -40,7 +40,6 @@ public class RestActivity extends AppCompatActivity {
         int nextWorkoutIndex = getIntent().getIntExtra("NextWorkoutIndex", 0);
         int totalWorkouts = getIntent().getIntExtra("TotalWorkouts", 0);
         int exerciseCount = getIntent().getIntExtra("ExerciseCount", 0);
-        int exerciseGif = getIntent().getIntExtra("ExerciseGif", R.drawable.cardiowomangif);
         String exerciseGifUrl = getIntent().getStringExtra("ExerciseGif");
         String exerciseName = getIntent().getStringExtra("ExerciseName");
 
