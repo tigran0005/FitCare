@@ -1,10 +1,10 @@
 package com.example.fitcarehub;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,10 +22,14 @@ public class RestActivity extends AppCompatActivity {
     private long remainingTimeMillis;
     private TextView timerTextView, nextWorkoutTextView, exerciseNameTextView, exerciseCountTextView;
     private GifImageView gif;
+    private CountDownTimer workoutTimer;
+    private long timeSpent = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rest);
+        startTimer2();
 
         skipBtn = findViewById(R.id.skipExercise);
         addTimeBtn = findViewById(R.id.addSeconds);
@@ -68,38 +72,20 @@ public class RestActivity extends AppCompatActivity {
         setupButtons();
     }
 
-    private void startTimer(long durationInSeconds) {
-        timer = new CountDownTimer(durationInSeconds * 1000, 1000) {
+    private void startTimer2() {
+        workoutTimer = new CountDownTimer(Long.MAX_VALUE, 100) {
             public void onTick(long millisUntilFinished) {
-                remainingTimeMillis = millisUntilFinished;
-                long minutes = (millisUntilFinished / 1000) / 60;
-                long seconds = (millisUntilFinished / 1000) % 60;
-                timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
+                timeSpent++;
             }
-
             public void onFinish() {
-                timerTextView.setText("00:00");
-                navigateToWorkoutActivity();
             }
         }.start();
     }
 
-    private void addExtraTime(long extraSeconds) {
-        timer.cancel();
-        startTimer((remainingTimeMillis + (extraSeconds * 1000)) / 1000);
-    }
-
-    private void skipExercise() {
-        timer.cancel();
-        navigateToWorkoutActivity();
-    }
-
-    private void navigateToWorkoutActivity() {
-        Intent intent = new Intent(RestActivity.this, WorkoutActivity.class);
-        int nextWorkoutIndex = getIntent().getIntExtra("NextWorkoutIndex", 0);
-        intent.putExtra("CurrentWorkoutIndex", nextWorkoutIndex);
-        startActivity(intent);
-        finish();
+    private void stopTimer2() {
+        if (workoutTimer != null) {
+            workoutTimer.cancel();
+        }
     }
 
     private void setupButtons() {
@@ -116,5 +102,41 @@ public class RestActivity extends AppCompatActivity {
                 addExtraTime(10);
             }
         });
+    }
+
+    private void addExtraTime(long extraSeconds) {
+        timer.cancel();
+        startTimer((remainingTimeMillis + (extraSeconds * 1000)) / 1000);
+    }
+
+    private void skipExercise() {
+        timer.cancel();
+        navigateToWorkoutActivity();
+    }
+
+    private void navigateToWorkoutActivity() {
+        Intent intent = new Intent(RestActivity.this, WorkoutActivity.class);
+        int nextWorkoutIndex = getIntent().getIntExtra("NextWorkoutIndex", 0);
+        stopTimer2();
+        intent.putExtra("CurrentWorkoutIndex", nextWorkoutIndex);
+        intent.putExtra("TimeSpentInRest", timeSpent);
+        startActivity(intent);
+        finish();
+    }
+
+    private void startTimer(long durationInSeconds) {
+        timer = new CountDownTimer(durationInSeconds * 1000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                remainingTimeMillis = millisUntilFinished;
+                long minutes = (millisUntilFinished / 1000) / 60;
+                long seconds = (millisUntilFinished / 1000) % 60;
+                timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
+            }
+
+            public void onFinish() {
+                timerTextView.setText("00:00");
+                navigateToWorkoutActivity();
+            }
+        }.start();
     }
 }

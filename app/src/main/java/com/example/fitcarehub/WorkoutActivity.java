@@ -2,6 +2,7 @@ package com.example.fitcarehub;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,7 +19,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import pl.droidsonroids.gif.GifImageView;
@@ -30,6 +30,9 @@ public class WorkoutActivity extends AppCompatActivity {
     private TextView exerciseNameTextView, exerciseCountTextView;
     private ImageView backArrow, forwardArrow, backToPreWorkoutArrow;
     private GifImageView gifImageView;
+    private CountDownTimer workoutTimer;
+    private long timeSpent = 0;
+    private long timeSpentInRest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,11 @@ public class WorkoutActivity extends AppCompatActivity {
         if (getIntent().hasExtra("CurrentWorkoutIndex")) {
             currentWorkoutIndex = getIntent().getIntExtra("CurrentWorkoutIndex", 0);
         }
+        if (getIntent().hasExtra("ContinueTimeSpent")) {
+            timeSpentInRest = getIntent().getLongExtra("ContinueTimeSpent", 0);
+        }
+
+
     }
 
     private void bindViews() {
@@ -95,8 +103,9 @@ public class WorkoutActivity extends AppCompatActivity {
         }
     }
 
-
     private void navigateToRestActivity(boolean isDoneClicked) {
+        stopTimer();
+
         if (currentWorkoutIndex < currentWorkoutItems.size() - 1) {
             currentWorkoutIndex++;
             WorkoutItem currentItem = currentWorkoutItems.get(currentWorkoutIndex);
@@ -107,17 +116,16 @@ public class WorkoutActivity extends AppCompatActivity {
             intent.putExtra("ExerciseName", currentItem.getName());
             intent.putExtra("ExerciseCount", currentItem.getCount());
             intent.putExtra("ExerciseGif", currentItem.getGif());
+            intent.putExtra("TimeSpent", timeSpent);
             startActivity(intent);
             finish();
         } else if (isDoneClicked || currentWorkoutIndex == currentWorkoutItems.size() - 1) {
             increaseTheFinishedCount();
             Intent intent = new Intent(WorkoutActivity.this, MainActivity.class);
+            intent.putExtra("TimeSpent", timeSpent);
             startActivity(intent);
             finish();
         }
-
-
-
     }
 
     private void increaseTheFinishedCount() {
@@ -131,14 +139,22 @@ public class WorkoutActivity extends AppCompatActivity {
                     finishedWorkouts = 0L;
                 }
                 finishedWorkouts++;
-                userDocRef.update("finishedWorkouts", finishedWorkouts)
-                        .addOnSuccessListener(aVoid -> Toast.makeText(WorkoutActivity.this, "Workout count updated successfully!", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Failed to update workout count", Toast.LENGTH_SHORT).show());
-            }).addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Error fetching workout count", Toast.LENGTH_SHORT).show());
+
+                Long existingTimeSpent = documentSnapshot.getLong("totalTimeSpent");
+                if (existingTimeSpent == null) {
+                    existingTimeSpent = 0L;
+                }
+                existingTimeSpent += timeSpent + timeSpentInRest;
+
+                userDocRef.update("finishedWorkouts", finishedWorkouts, "totalTimeSpent", existingTimeSpent)
+                        .addOnSuccessListener(aVoid -> Toast.makeText(WorkoutActivity.this, "Workout count and time updated successfully!", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Failed to update workout count and time", Toast.LENGTH_SHORT).show());
+            }).addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Error fetching user data", Toast.LENGTH_SHORT).show());
         } else {
             Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void navigateBackToPreWorkout() {
         startActivity(new Intent(this, PreWorkoutActivity.class));
@@ -159,6 +175,25 @@ public class WorkoutActivity extends AppCompatActivity {
                     .load(currentItem.getGif())
                     .apply(options)
                     .into(gifImageView);
+
+            startTimer();
+        }
+    }
+
+    private void startTimer() {
+        workoutTimer = new CountDownTimer(Long.MAX_VALUE, 100) {
+            public void onTick(long millisUntilFinished) {
+                timeSpent++;
+            }
+
+            public void onFinish() {
+            }
+        }.start();
+    }
+
+    private void stopTimer() {
+        if (workoutTimer != null) {
+            workoutTimer.cancel();
         }
     }
 }

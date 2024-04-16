@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainFragment extends Fragment {
     ImageView profilePicture;
-    TextView finishedText;
+    TextView finishedText, inProgress, timeSpent, timeText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,7 +38,9 @@ public class MainFragment extends Fragment {
         TextView welcomeTextView = view.findViewById(R.id.Welcome);
         ConstraintLayout constraintLayout = view.findViewById(R.id.mainFragmentArms);
         finishedText = view.findViewById(R.id.finishedText);
-
+        inProgress = view.findViewById(R.id.inProgressTextView);
+        timeSpent = view.findViewById(R.id.timeSpentTextView);
+        timeText = view.findViewById(R.id.timeText);
 
         constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,15 +105,42 @@ public class MainFragment extends Fragment {
                 if (task.isSuccessful() && task.getResult() != null) {
                     DocumentSnapshot document = task.getResult();
                     Long finishedWorkouts = document.getLong("finishedWorkouts");
+                    Long totalTimeSpentInSeconds = document.getLong("totalTimeSpent");
+
+                    String workoutsCompleted = "0";
+                    String timeSpentDisplay;
+
                     if (finishedWorkouts != null) {
-                        finishedText.setText(String.format("%d", finishedWorkouts));
-                    } else {
-                        finishedText.setText("0");
+                        workoutsCompleted = String.format("%d", finishedWorkouts);
                     }
+
+                    if (totalTimeSpentInSeconds != null) {
+                        long hours = totalTimeSpentInSeconds / 3600;
+                        long minutes = (totalTimeSpentInSeconds % 3600) / 60;
+
+                        if (hours > 0) {
+                            timeSpentDisplay = String.format("%d", hours);
+                            timeText.setText("Hours");
+                        } else {
+                            timeSpentDisplay = String.format("%d", minutes);
+                            timeText.setText("Minutes");
+                        }
+                    } else {
+                        timeSpentDisplay = "0";
+                        timeText.setText("Minutes");
+                    }
+
+                    finishedText.setText(workoutsCompleted);
+                    timeSpent.setText(timeSpentDisplay);
+                } else {
+//                    Toast.makeText(WorkoutActivity.this, "Failed to fetch workout data.", Toast.LENGTH_SHORT).show();
                 }
             });
+        } else {
+//            Toast.makeText(WorkoutActivity.this, "User not signed in", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
