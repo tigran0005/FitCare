@@ -15,11 +15,15 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.droidsonroids.gif.GifImageView;
 
@@ -42,6 +46,8 @@ public class WorkoutActivity extends AppCompatActivity {
         setupViewListeners();
 
         fetchWorkoutsFromFirestore();
+
+        increaseWorkoutNumber("Arms1");
 
         if (getIntent().hasExtra("CurrentWorkoutIndex")) {
             currentWorkoutIndex = getIntent().getIntExtra("CurrentWorkoutIndex", 0);
@@ -81,6 +87,7 @@ public class WorkoutActivity extends AppCompatActivity {
 
                         if (!currentWorkoutItems.isEmpty()) {
                             updateUI();
+                            addWorkoutSizeToUserCollection();
                         } else {
                             Toast.makeText(WorkoutActivity.this, "No workouts found.", Toast.LENGTH_SHORT).show();
                         }
@@ -121,12 +128,92 @@ public class WorkoutActivity extends AppCompatActivity {
             finish();
         } else if (isDoneClicked || currentWorkoutIndex == currentWorkoutItems.size() - 1) {
             increaseTheFinishedCount();
+            workoutIsDone();
             Intent intent = new Intent(WorkoutActivity.this, MainActivity.class);
             intent.putExtra("TimeSpent", timeSpent);
             startActivity(intent);
             finish();
         }
+
     }
+
+    private void workoutIsDone() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            DocumentReference docRef = db.collection("Users").document(user.getUid())
+                    .collection("WorkoutInfo").document("WorkoutStatus");
+
+            docRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        docRef.update("isWorkoutCompleted", true);
+                    } else {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("isWorkoutCompleted", true);
+
+                        docRef.set(data);
+                    }
+                } else {
+                    Toast.makeText(WorkoutActivity.this, "Failed to check workout completed status in Firestore", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(WorkoutActivity.this, "User not signed in", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+    private void addWorkoutSizeToUserCollection() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            Map<String, Object> workoutSizeMap = new HashMap<>();
+            workoutSizeMap.put("size", currentWorkoutItems.size());
+
+            db.collection("Users").document(userId)
+                    .collection("WorkoutInfo").document("Size")
+                    .set(workoutSizeMap);
+
+        } else {
+            Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void increaseWorkoutNumber(String workoutName) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            DocumentReference workoutRef = db.collection("Users").document(userId)
+                    .collection("WorkoutInfo").document(workoutName);
+
+            db.runTransaction(transaction -> {
+                        DocumentSnapshot snapshot = transaction.get(workoutRef);
+
+                        if (snapshot.exists()) {
+                            transaction.update(workoutRef, "WorkoutNumber", FieldValue.increment(1));
+                        } else {
+                            Map<String, Object> workoutInfo = new HashMap<>();
+                            workoutInfo.put("WorkoutNumber", 1);
+                            transaction.set(workoutRef, workoutInfo);
+                        }
+
+                        return null;
+                    }).addOnSuccessListener(aVoid -> Toast.makeText(WorkoutActivity.this, "Workout number updated successfully!", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Failed to update workout number", Toast.LENGTH_SHORT).show());
+        } else {
+            Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     private void increaseTheFinishedCount() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -187,6 +274,7 @@ public class WorkoutActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
+
             }
         }.start();
     }
@@ -196,4 +284,8 @@ public class WorkoutActivity extends AppCompatActivity {
             workoutTimer.cancel();
         }
     }
+
+
+
+
 }

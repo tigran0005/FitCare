@@ -73,7 +73,7 @@ public class RestActivity extends AppCompatActivity {
     }
 
     private void startTimer2() {
-        workoutTimer = new CountDownTimer(Long.MAX_VALUE, 100) {
+        workoutTimer = new CountDownTimer(Long.MAX_VALUE, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeSpent++;
             }
@@ -81,6 +81,7 @@ public class RestActivity extends AppCompatActivity {
             }
         }.start();
     }
+
 
     private void stopTimer2() {
         if (workoutTimer != null) {

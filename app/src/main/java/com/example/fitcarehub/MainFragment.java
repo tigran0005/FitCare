@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -132,12 +133,8 @@ public class MainFragment extends Fragment {
 
                     finishedText.setText(workoutsCompleted);
                     timeSpent.setText(timeSpentDisplay);
-                } else {
-//                    Toast.makeText(WorkoutActivity.this, "Failed to fetch workout data.", Toast.LENGTH_SHORT).show();
                 }
             });
-        } else {
-//            Toast.makeText(WorkoutActivity.this, "User not signed in", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -148,6 +145,7 @@ public class MainFragment extends Fragment {
         setImageToProfilePicture();
         updateWorkoutCountUI();
     }
+
 
 
 }
