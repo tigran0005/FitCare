@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LeaderboardFragment">
+
+    <LinearLayout
+        android:id="@+id/LeaderboardHeaderLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Leaderboard"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LeaderboardTops"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/LeaderboardHeaderLayout"
+        app:layout_constraintTop_toTopOf="@+id/Leaderboard">
+
+        <LinearLayout
+            android:id="@+id/LeaderboardSecond"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|top"
+            android:orientation="vertical"
+            android:layout_marginTop="25dp"
+            >
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/LeaderboardImageSilver"
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                app:strokeWidth="5dp"
+                android:padding="5dp"
+                app:strokeColor="#a7a7a7 "
+                android:background="@drawable/rounded_image_background"
+                android:src="@drawable/defaultprofilepicture"
+                app:shapeAppearanceOverlay="@style/circular" />
+            <TextView
+                android:id="@+id/LeaderboardTextSilver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:textAlignment="center"
+                android:layout_marginTop="10dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LeaderboardFirst"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|top"
+            android:orientation="vertical">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/LeaderboardImageGold"
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                app:strokeWidth="5dp"
+                android:padding="5dp"
+                app:strokeColor="#FFD700"
+                android:background="@drawable/rounded_image_background"
+                android:src="@drawable/defaultprofilepicture"
+                app:shapeAppearanceOverlay="@style/circular" />
+            <TextView
+                android:id="@+id/LeaderboardTextGold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:textAlignment="center"
+                android:layout_marginTop="10dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LeaderboardThird"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|top"
+            android:orientation="vertical"
+            android:layout_marginTop="25dp"
+            >
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/LeaderboardImageBronze"
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                app:strokeWidth="5dp"
+                android:padding="5dp"
+                app:strokeColor="#CD7F32"
+                android:background="@drawable/rounded_image_background"
+                android:src="@drawable/defaultprofilepicture"
+                app:shapeAppearanceOverlay="@style/circular" />
+            <TextView
+                android:id="@+id/LeaderboardTextBronze"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:textAlignment="center"
+                android:layout_marginTop="10dp"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/Leaderboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/LeaderboardCards"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:background="@drawable/top_left_top_right_rounded_for_leaderboard"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewLeaderboard"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:scrollbars="vertical" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -233,7 +233,12 @@ public class WorkoutActivity extends AppCompatActivity {
                 }
                 existingTimeSpent += timeSpent + timeSpentInRest;
 
-                userDocRef.update("finishedWorkouts", finishedWorkouts, "totalTimeSpent", existingTimeSpent)
+                Long caloriesBurnt = documentSnapshot.getLong("caloriesBurnt");
+                if (caloriesBurnt == null) {
+                    caloriesBurnt = 0L;
+                }
+                caloriesBurnt += 200;
+                userDocRef.update("finishedWorkouts", finishedWorkouts, "totalTimeSpent", existingTimeSpent, "caloriesBurnt", caloriesBurnt)
                         .addOnSuccessListener(aVoid -> Toast.makeText(WorkoutActivity.this, "Workout count and time updated successfully!", Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Failed to update workout count and time", Toast.LENGTH_SHORT).show());
             }).addOnFailureListener(e -> Toast.makeText(WorkoutActivity.this, "Error fetching user data", Toast.LENGTH_SHORT).show());

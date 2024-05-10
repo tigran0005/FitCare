@@ -37,16 +37,26 @@ public class MainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         profilePicture = view.findViewById(R.id.profileImageMainFragment);
         TextView welcomeTextView = view.findViewById(R.id.Welcome);
-        ConstraintLayout constraintLayout = view.findViewById(R.id.mainFragmentArms);
+        ConstraintLayout armsConstraintLayout = view.findViewById(R.id.mainFragmentArms);
+        ConstraintLayout cardioConstraintLayout = view.findViewById(R.id.mainFragmentCardio);
         finishedText = view.findViewById(R.id.finishedText);
         inProgress = view.findViewById(R.id.inProgressTextView);
         timeSpent = view.findViewById(R.id.timeSpentTextView);
         timeText = view.findViewById(R.id.timeText);
 
-        constraintLayout.setOnClickListener(new View.OnClickListener() {
+        armsConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PreWorkoutActivity.class);
+                intent.putExtra("workoutType", "arms");
+                startActivity(intent);
+            }
+        });
+        cardioConstraintLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PreWorkoutActivity.class);
+                intent.putExtra("workoutType", "cardio");
                 startActivity(intent);
             }
         });

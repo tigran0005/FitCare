@@ -24,7 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class WorkoutsFragment extends Fragment {
     private ProgressBar progressBar;
     private TextView progressText;
-    private ConstraintLayout armsWorkout;
+    private ConstraintLayout armsWorkout, legsWorkout, cardioWorkout;
 
     @Nullable
     @Override
@@ -34,22 +34,32 @@ public class WorkoutsFragment extends Fragment {
         progressBar = rootView.findViewById(R.id.progressBar);
         progressText = rootView.findViewById(R.id.progressTextView);
         RadioGroup radioGroup = rootView.findViewById(R.id.radioGroup);
-        RadioButton radioButtonGainMuscle = rootView.findViewById(R.id.radioButtonGainMuscle);
-        RadioButton radioButtonLoseFat = rootView.findViewById(R.id.radioButtonLoseFat);
-        RadioButton radioButtonStayActive = rootView.findViewById(R.id.radioButtonStayActive);
         armsWorkout = rootView.findViewById(R.id.armsConstraintLayout);
+        legsWorkout = rootView.findViewById(R.id.legsConstraintLayout);
+        cardioWorkout = rootView.findViewById(R.id.cardioConstraintLayout);
 
 
         fetchProgressFromFirestore();
         controlWorkoutsVisibility(radioGroup);
 
-        ConstraintLayout armsConstraintLayout = rootView.findViewById(R.id.armsConstraintLayout);
-        armsConstraintLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), PreWorkoutActivity.class);
-            startActivity(intent);
+        armsWorkout.setOnClickListener(v -> {
+            navigateToPreWorkout("arms");
+        });
+        legsWorkout.setOnClickListener(v -> {
+            navigateToPreWorkout("legs");
+        });
+        cardioWorkout.setOnClickListener(v -> {
+            navigateToPreWorkout("cardio");
         });
 
         return rootView;
+    }
+
+    private void navigateToPreWorkout(String workoutType) {
+        Intent intent = new Intent(getActivity(), PreWorkoutActivity.class);
+        intent.putExtra("workoutType", workoutType);
+        startActivity(intent);
+
     }
 
     private void fetchProgressFromFirestore() { // doesnt work
@@ -95,13 +105,17 @@ public class WorkoutsFragment extends Fragment {
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radioButtonGainMuscle) {
                 armsWorkout.setVisibility(View.VISIBLE);
-            } else if (checkedId == R.id.radioButtonLoseFat || checkedId == R.id.radioButtonStayActive) {
+                legsWorkout.setVisibility(View.VISIBLE);
+            } else if (checkedId == R.id.radioButtonLoseFat) {
                 armsWorkout.setVisibility(View.GONE);
+                legsWorkout.setVisibility(View.GONE);
             } else {
                 armsWorkout.setVisibility(View.VISIBLE);
+                legsWorkout.setVisibility(View.VISIBLE);
             }
         });
     }
+
 
 
     public void updateProgressBar(int progress) {

@@ -37,11 +37,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/radioButtonAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="All" />
 
                 <RadioButton
                     android:id="@+id/radioButtonGainMuscle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
                     android:text="Gain muscle" />
 
                 <RadioButton
@@ -50,11 +57,7 @@
                     android:layout_height="wrap_content"
                     android:text="Lose fat" />
 
-                <RadioButton
-                    android:id="@+id/radioButtonStayActive"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Stay active" />
+
             </RadioGroup>
 
         </LinearLayout>
@@ -187,99 +190,197 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-                <!--                    android:id="@+id/legsConstraintLayout"-->
-                <!--                    android:layout_width="325dp"-->
-                <!--                    android:layout_height="150dp"-->
-                <!--                    android:layout_marginTop="16dp"-->
-                <!--                    android:background="@drawable/shape"-->
-                <!--                    android:elevation="4dp">-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/legsConstraintLayout"
+                    android:layout_width="325dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/shape"
+                    android:elevation="4dp">
 
-                <!--                    <androidx.constraintlayout.widget.Guideline-->
-                <!--                        android:id="@+id/legsGuideline"-->
-                <!--                        android:layout_width="wrap_content"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:orientation="vertical"-->
-                <!--                        app:layout_constraintGuide_end="162dp" />-->
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_end="162dp" />
 
-                <!--                    <LinearLayout-->
-                <!--                        android:id="@+id/legsLeftLinearLayout"-->
-                <!--                        android:layout_width="0dp"-->
-                <!--                        android:layout_height="0dp"-->
-                <!--                        android:orientation="vertical"-->
-                <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                        app:layout_constraintEnd_toStartOf="@id/legsGuideline"-->
-                <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                <!--                        app:layout_constraintTop_toTopOf="parent">-->
+                    <LinearLayout
+                        android:id="@+id/leftLegLinearLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/guideline3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                <!--                        <TextView-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:layout_marginStart="15dp"-->
-                <!--                            android:layout_marginTop="15dp"-->
-                <!--                            android:text="Legs"-->
-                <!--                            android:textColor="@color/black"-->
-                <!--                            android:textSize="30dp"-->
-                <!--                            android:textStyle="bold" />-->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="15dp"
+                            android:text="Legs"
+                            android:textColor="@color/black"
+                            android:textSize="30dp"
+                            android:textStyle="bold" />
 
-                <!--                        <TextView-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:layout_marginStart="15dp"-->
-                <!--                            android:text="10 Exercises"-->
-                <!--                            android:textColor="@color/normal_text_color"-->
-                <!--                            android:textSize="15dp" />-->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:text="8 Exercises"
+                            android:textColor="@color/normal_text_color"
+                            android:textSize="15dp" />
 
-                <!--                        <TextView-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:layout_marginStart="15dp"-->
-                <!--                            android:text="25 Minutes"-->
-                <!--                            android:textColor="@color/normal_text_color"-->
-                <!--                            android:textSize="15dp" />-->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:text="30 Minutes"
+                            android:textColor="@color/normal_text_color"
+                            android:textSize="15dp" />
 
-                <!--                        <TextView-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="wrap_content"-->
-                <!--                            android:layout_marginTop="10dp"-->
-                <!--                            android:layout_marginStart="15dp"-->
-                <!--                            android:text="1/10"-->
-                <!--                            android:textSize="10dp" />-->
+                        <TextView
+                            android:id="@+id/legProgressTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/normal_text_color"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginStart="15dp"
+                            android:text="Leg Progress"
+                            android:textSize="10dp" />
 
-                <!--                        <ProgressBar-->
-                <!--                            android:id="@+id/legsProgressBar"-->
-                <!--                            style="@android:style/Widget.ProgressBar.Horizontal"-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="10dp"-->
-                <!--                            android:layout_marginStart="15dp"-->
-                <!--                            android:layout_marginEnd="15dp"-->
-                <!--                            android:layout_marginTop="5dp"-->
-                <!--                            android:max="100"-->
-                <!--                            android:progress="10"-->
-                <!--                            android:progressDrawable="@drawable/custom_progress_bar" />-->
-                <!--                    </LinearLayout>-->
+                        <ProgressBar
+                            android:id="@+id/legProgressBar"
+                            style="@android:style/Widget.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="10dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginTop="5dp"
+                            android:max="100"
+                            android:progress="20"
+                            android:progressDrawable="@drawable/custom_progress_bar" />
+                    </LinearLayout>
 
-                <!--                    <LinearLayout-->
-                <!--                        android:id="@+id/legsRightLinearLayout"-->
-                <!--                        android:layout_width="0dp"-->
-                <!--                        android:layout_height="0dp"-->
-                <!--                        android:gravity="center"-->
-                <!--                        android:orientation="vertical"-->
-                <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                        app:layout_constraintStart_toEndOf="@id/legsGuideline"-->
-                <!--                        app:layout_constraintTop_toTopOf="parent">-->
+                    <LinearLayout
+                        android:id="@+id/rightLegLinearLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guideline3"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                <!--                        <com.google.android.material.imageview.ShapeableImageView-->
-                <!--                            android:id="@+id/legsWorkoutFirstImageView"-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="match_parent"-->
-                <!--                            android:scaleType="fitXY"-->
-                <!--                            android:src="@drawable/gradientedleg"-->
-                <!--                            app:shapeAppearanceOverlay="@style/CustomRoundedImageView" />-->
-                <!--                    </LinearLayout>-->
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/legWorkoutFirstImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/legtraining"
+                            app:shapeAppearanceOverlay="@style/CustomRoundedImageView" />
+                    </LinearLayout>
 
-                <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardioConstraintLayout"
+                    android:layout_width="325dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/shape"
+                    android:elevation="4dp">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_end="162dp" />
+
+                    <LinearLayout
+                        android:id="@+id/leftCardioLinearLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/guideline2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="15dp"
+                            android:text="Cardio"
+                            android:textColor="@color/black"
+                            android:textSize="30dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:text="10 Exercises"
+                            android:textColor="@color/normal_text_color"
+                            android:textSize="15dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:text="25 Minutes"
+                            android:textColor="@color/normal_text_color"
+                            android:textSize="15dp" />
+
+                        <TextView
+                            android:id="@+id/cardioProgressTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/normal_text_color"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginStart="15dp"
+                            android:text="Cardio Progress"
+                            android:textSize="10dp" />
+
+                        <ProgressBar
+                            android:id="@+id/cardioProgressBar"
+                            style="@android:style/Widget.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="10dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginTop="5dp"
+                            android:max="100"
+                            android:progress="10"
+                            android:progressDrawable="@drawable/custom_progress_bar" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/rightCardioLinearLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guideline2"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/cardioWorkoutFirstImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/paintedgirlrunningwithweightspng"
+                            app:shapeAppearanceOverlay="@style/CustomRoundedImageView" />
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
